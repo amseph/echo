@@ -482,7 +482,7 @@ export default function Home() {
             <div className="flex gap-2 mt-1">
               <button 
                 onClick={() => setConfirmDeleteId(null)}
-                className="flex-1 py-2 text-sm font-semibold text-[#1d1d1f] dark:text-neutral-100 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors active:scale-95"
+                className="flex-1 py-2 text-sm font-semibold text-[#1d1d1f] dark:text-neutral-200 bg-gray-100 dark:bg-neutral-700 hover:bg-gray-200 dark:hover:bg-neutral-600 rounded-xl transition-colors active:scale-95"
               >
                 Cancel
               </button>
@@ -647,7 +647,7 @@ export default function Home() {
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-4">
                       <p className="text-[10px] font-bold text-gray-400 dark:text-neutral-400 uppercase tracking-wider">Allowance</p>
                       <p className="text-xl font-bold text-[#1d2d2a] mt-1">₱{totalAllowance.toFixed(2)}</p>
-                      <p className="text-[10px] text-green-500 mt-1 font-medium">● Inflow this cycle</p>
+                      <p className="text-[10px] text-green-500 dark:text-emerald-400 mt-1 font-medium">● Inflow this cycle</p>
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-4">
                       <p className="text-[10px] font-bold text-gray-400 dark:text-neutral-400 uppercase tracking-wider">Expenses</p>
@@ -796,7 +796,7 @@ export default function Home() {
                                   <Pie data={chartData} cx="50%" cy="50%" innerRadius={42} outerRadius={62} paddingAngle={4} dataKey="value">
                                     {chartData.map((_, index) => <Cell key={index} fill={['#1d2d2a', '#2d4a3e', '#b7e887', '#86c46a', '#5a8f4a'][index % 5]} />)}
                                   </Pie>
-                                  <Tooltip formatter={(v) => `₱${Number(v).toFixed(2)}`} />
+                                  <Tooltip formatter={(v) => `₱${Number(v).toFixed(2)}`} contentStyle={{ backgroundColor: theme === 'dark' ? '#262626' : '#fff', borderColor: theme === 'dark' ? '#404040' : '#e5e7eb', color: theme === 'dark' ? '#f5f5f5' : '#171717', borderRadius: '0.75rem' }} itemStyle={{ color: theme === 'dark' ? '#f5f5f5' : '#171717' }} />
                                 </PieChart>
                               </ResponsiveContainer>
                             </div>
@@ -836,7 +836,7 @@ export default function Home() {
                                   </div>
                                   <div className="flex items-center gap-3 ml-3 flex-shrink-0">
                                     <div className="text-right">
-                                      <p className={`font-bold text-sm ${isInflow ? 'text-green-600' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
+                                      <p className={`font-bold text-sm ${isInflow ? 'text-green-600 dark:text-emerald-400' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
                                         {isDebtPay ? `−₱${parseFloat(tx.amount).toFixed(2)}` : `${isInflow ? '+' : '−'}₱${parseFloat(tx.amount).toFixed(2)}`}
                                       </p>
                                       <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b] dark:text-neutral-400">{isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}</p>
@@ -939,7 +939,7 @@ export default function Home() {
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                   ))}
                                 </Pie>
-                                <Tooltip formatter={(value) => `₱${Number(value).toFixed(2)}`} />
+                                <Tooltip formatter={(value) => `₱${Number(value).toFixed(2)}`} contentStyle={{ backgroundColor: theme === 'dark' ? '#262626' : '#fff', borderColor: theme === 'dark' ? '#404040' : '#e5e7eb', color: theme === 'dark' ? '#f5f5f5' : '#171717', borderRadius: '0.75rem' }} itemStyle={{ color: theme === 'dark' ? '#f5f5f5' : '#171717' }} />
                               </PieChart>
                             </ResponsiveContainer>
                           </div>
@@ -978,7 +978,7 @@ export default function Home() {
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-green-50 rounded-xl p-4 text-center">
                           <p className="text-[10px] font-semibold text-green-700 uppercase tracking-wider">Total Inflows</p>
-                          <p className="text-lg font-bold text-green-600 mt-1">₱{totalInflows.toFixed(2)}</p>
+                          <p className="text-lg font-bold text-green-600 dark:text-emerald-400 mt-1">₱{totalInflows.toFixed(2)}</p>
                         </div>
                         <div className="bg-red-50 rounded-xl p-4 text-center">
                           <p className="text-[10px] font-semibold text-red-700 uppercase tracking-wider">Total Outflows</p>
