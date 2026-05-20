@@ -475,14 +475,14 @@ export default function Home() {
                 </svg>
               </div>
               <div className="flex-1 pt-0.5">
-                <h3 className="text-sm font-bold text-[#1d1d1f] dark:text-neutral-100">Delete Transaction?</h3>
-                <p className="text-xs text-[#86868b] dark:text-neutral-400 mt-0.5">This action cannot be undone.</p>
+                <h3 className="text-sm font-bold text-neutral-900">Delete Transaction?</h3>
+                <p className="text-xs text-[#86868b] mt-0.5">This action cannot be undone.</p>
               </div>
             </div>
             <div className="flex gap-2 mt-1">
               <button 
                 onClick={() => setConfirmDeleteId(null)}
-                className="flex-1 py-2 text-sm font-semibold text-[#1d1d1f] dark:text-neutral-200 bg-gray-100 dark:bg-neutral-700 hover:bg-gray-200 dark:hover:bg-neutral-600 rounded-xl transition-colors active:scale-95"
+                className="flex-1 py-2 text-sm font-semibold text-[#1d1d1f] bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors active:scale-95"
               >
                 Cancel
               </button>
@@ -618,7 +618,7 @@ export default function Home() {
                 <motion.div key="home" custom={direction} variants={tabVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }} className="mx-auto max-w-5xl space-y-5 pb-24">
                   {/* HEADER */}
                   <div 
-                    className="bg-[#1d2d2a] dark:bg-neutral-800 rounded-3xl px-6 py-5 flex items-center justify-between"
+                    className="bg-gradient-to-br from-[#1d2d2a] to-[#2a453e] rounded-3xl px-6 py-5 flex items-center justify-between"
                   >
                     <div>
                       <p className="text-[11px] font-semibold uppercase tracking-widest text-[#b7e887]/70 mb-0.5">ECHO Dashboard</p>
@@ -717,7 +717,7 @@ export default function Home() {
                                 type="button"
                                 disabled={scanning}
                                 onClick={() => receiptInputRef.current?.click()}
-                                className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg bg-[#1d2d2a] dark:bg-neutral-600 text-white hover:opacity-90 active:scale-90 transition-all disabled:opacity-40 shadow-sm"
+                                className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#1d2d2a] to-[#2a453e] text-white hover:opacity-90 active:scale-90 transition-all disabled:opacity-40 shadow-sm"
                                 title="Scan receipt"
                               >
                                 {scanning ? (
@@ -775,7 +775,7 @@ export default function Home() {
                               value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} />
                           )}
                           <button type="submit" disabled={loading}
-                            className="w-full bg-[#1d2d2a] dark:bg-neutral-700 text-white py-3 rounded-xl font-semibold text-sm hover:bg-[#253d38] dark:hover:bg-neutral-600 active:scale-[0.98] transition-all disabled:opacity-50">
+                            className="w-full bg-gradient-to-br from-[#1d2d2a] to-[#2a453e] text-white py-3 rounded-xl font-semibold text-sm hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50">
                             {loading ? 'Saving...' : 'Record Transaction'}
                           </button>
                         </form>
