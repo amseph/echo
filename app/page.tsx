@@ -661,11 +661,118 @@ export default function Home() {
         </div>
         )}
 
-        {activeTab === 'analytics' && (
-          <div className="mx-auto max-w-5xl space-y-6">
-            {/* Analytics placeholder */}
+        {activeTab === 'analytics' && (() => {
+          const burnPercentage = totalAllowance > 0 ? Math.min(Math.round((totalExpenses / totalAllowance) * 100), 100) : 0;
+          const topCategory = chartData.length > 0 ? chartData.reduce((a, b) => a.value > b.value ? a : b) : null;
+          const totalInflows = totalAllowance + totalShortages + totalDebt;
+          const totalOutflows = totalExpenses;
+          const chartTotal = chartData.reduce((sum, c) => sum + c.value, 0);
+
+          return (
+          <div className="max-w-md mx-auto space-y-6 pt-4 pb-24">
+
+            {/* Header */}
+            <h2 className="text-2xl font-semibold text-[#1d1d1f]">Financial Analytics</h2>
+
+            {/* Burn Rate Card */}
+            <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-[#1d1d1f]">Budget Utilization</p>
+                <p className={`text-sm font-bold ${burnPercentage >= 70 ? 'text-red-500' : 'text-[#1d1d1f]'}`}>
+                  {burnPercentage}%
+                </p>
+              </div>
+              <div className="h-2.5 w-full rounded-full bg-[#f5f5f7] overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    burnPercentage >= 90 ? 'bg-red-500' : burnPercentage >= 70 ? 'bg-amber-500' : 'bg-[#1d1d1f]'
+                  }`}
+                  style={{ width: `${burnPercentage}%` }}
+                />
+              </div>
+              <p className="text-xs text-[#86868b]">
+                {burnPercentage}% of your ₱{totalAllowance.toFixed(2)} allowance has been spent this cycle.
+              </p>
+            </div>
+
+            {/* Spending Distribution Card */}
+            <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm p-5 space-y-4">
+              <p className="text-sm font-medium text-[#1d1d1f]">Spending Distribution</p>
+              {chartData.length > 0 ? (
+                <>
+                  <div className="flex justify-center">
+                    <ResponsiveContainer width={180} height={180}>
+                      <PieChart>
+                        <Pie
+                          data={chartData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={70}
+                          paddingAngle={4}
+                          dataKey="value"
+                        >
+                          {chartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => `₱${Number(value).toFixed(2)}`} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="space-y-2">
+                    {chartData.map((entry, index) => (
+                      <div key={entry.name} className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                          <span className="text-[#1d1d1f] font-medium truncate max-w-[140px]">{entry.name}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[#86868b]">{chartTotal > 0 ? Math.round((entry.value / chartTotal) * 100) : 0}%</span>
+                          <span className="text-[#1d1d1f] font-semibold">₱{entry.value.toFixed(2)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="text-xs text-[#86868b] text-center py-8">Log expenses to generate category metrics.</p>
+              )}
+            </div>
+
+            {/* Top Category Insight */}
+            {topCategory && (
+              <div className="bg-amber-50 rounded-2xl border border-amber-200 shadow-sm px-5 py-4">
+                <p className="text-xs font-medium text-amber-800">
+                  ⚠️ <span className="font-semibold">{topCategory.name}</span> is your highest expense this cycle at <span className="font-bold">₱{topCategory.value.toFixed(2)}</span>
+                </p>
+              </div>
+            )}
+
+            {/* Net Flow Card */}
+            <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm p-5 space-y-4">
+              <p className="text-sm font-medium text-[#1d1d1f]">Cash Flow Summary</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-green-50 rounded-xl p-4 text-center">
+                  <p className="text-[10px] font-semibold text-green-700 uppercase tracking-wider">Total Inflows</p>
+                  <p className="text-lg font-bold text-green-600 mt-1">₱{totalInflows.toFixed(2)}</p>
+                </div>
+                <div className="bg-red-50 rounded-xl p-4 text-center">
+                  <p className="text-[10px] font-semibold text-red-700 uppercase tracking-wider">Total Outflows</p>
+                  <p className="text-lg font-bold text-red-500 mt-1">₱{totalOutflows.toFixed(2)}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-[#f5f5f7]">
+                <p className="text-xs text-[#86868b]">Net Balance</p>
+                <p className={`text-sm font-bold ${netBalance >= 0 ? 'text-[#1d1d1f]' : 'text-red-500'}`}>
+                  {netBalance >= 0 ? '+' : ''}₱{netBalance.toFixed(2)}
+                </p>
+              </div>
+            </div>
+
           </div>
-        )}
+          );
+        })()}
 
         {activeTab === 'settings' && (
           <div className="max-w-md mx-auto space-y-6 pt-4 pb-24">
