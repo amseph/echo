@@ -242,8 +242,25 @@ export default function Home() {
       
       {/* Case 1: Database is still pulling rows */}
       {loading ? (
-        <div className="flex min-h-[60vh] items-center justify-center text-sm text-[#86868b]">
-          Loading your ledger...
+        <div className="mx-auto max-w-5xl space-y-6 animate-pulse mt-2">
+          {/* Header Placeholder */}
+          <div className="flex items-start justify-between border-b border-[#e8e8ed] pb-6 mb-8">
+            <div className="space-y-2">
+              <div className="h-9 w-24 bg-[#e8e8ed] rounded-xl" />
+              <div className="h-4 w-48 bg-[#e8e8ed] rounded-lg" />
+            </div>
+            <div className="h-8 w-24 bg-[#e8e8ed] rounded-xl" />
+          </div>
+
+          {/* Metric Cards Placeholder */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 w-full max-w-4xl">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-white h-[90px] p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                <div className="h-3 w-16 bg-[#f5f5f7] rounded-md" />
+                <div className="h-5 w-24 bg-[#f5f5f7] rounded-md" />
+              </div>
+            ))}
+          </div>
         </div>
       ) : transactions.length === 0 ? (
         
