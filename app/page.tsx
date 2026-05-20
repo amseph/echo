@@ -31,6 +31,8 @@ export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [customCategory, setCustomCategory] = useState('');
+  const [cyclePreference, setCyclePreference] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('echo_cycle') || 'Monthly' : 'Monthly');
+  const [userEmail, setUserEmail] = useState('');
 
   const handleSignOut = async () => {
     try {
@@ -43,6 +45,27 @@ export default function Home() {
     } catch (error: any) {
       console.error('Error signing out:', error.message);
     }
+  };
+
+  const handleResetLedger = async () => {
+    if (!window.confirm('Are you sure you want to completely wipe your ledger? This cannot be undone.')) return;
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { error } = await supabase.from('transactions').delete().eq('user_id', user.id);
+      if (!error) {
+        setTransactions([]);
+        setActiveTab('home');
+      } else {
+        alert('Error resetting data: ' + error.message);
+      }
+    }
+    setLoading(false);
+  };
+
+  const handleCycleChange = (value: string) => {
+    setCyclePreference(value);
+    localStorage.setItem('echo_cycle', value);
   };
 
   const handleInitializeCycle = async (e: React.FormEvent) => {
@@ -125,6 +148,7 @@ export default function Home() {
         // Direct unauthorized visitors out to the login page immediately
         router.push('/login');
       } else {
+        setUserEmail(session.user.email ?? '');
         // Load current user's isolated transaction data from Supabase rows
         fetchTransactions();
       }
@@ -644,8 +668,77 @@ export default function Home() {
         )}
 
         {activeTab === 'settings' && (
-          <div className="mx-auto max-w-5xl space-y-6">
-            {/* Settings placeholder */}
+          <div className="max-w-md mx-auto space-y-6 pt-4 pb-24">
+
+            {/* Title Block */}
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-semibold text-[#1d1d1f]">Settings</h2>
+              <button
+                onClick={() => setActiveTab('home')}
+                className="text-xs font-medium text-[#0071e3] hover:underline"
+              >
+                Done
+              </button>
+            </div>
+
+            {/* Preference Card */}
+            <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm overflow-hidden">
+              <div className="px-5 py-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-[#1d1d1f]">Allowance Cycle</p>
+                  <p className="text-xs text-[#86868b] mt-0.5">Controls how your metrics reset</p>
+                </div>
+                <select
+                  value={cyclePreference}
+                  onChange={(e) => handleCycleChange(e.target.value)}
+                  className="rounded-lg border border-[#d2d2d7] bg-[#f5f5f7] px-3 py-1.5 text-xs font-medium text-[#1d1d1f] outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
+                >
+                  <option value="Weekly">Weekly</option>
+                  <option value="Semi-Monthly">Semi-Monthly</option>
+                  <option value="Monthly">Monthly</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Profile Card */}
+            <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm overflow-hidden">
+              <div className="px-5 py-4 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5f5f7] text-[#86868b]">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-[#1d1d1f]">Account</p>
+                  <p className="text-xs text-[#86868b] truncate">{userEmail || '—'}</p>
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="text-xs font-medium text-[#86868b] hover:text-[#1d1d1f] transition-colors"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+
+            {/* Danger Zone Card */}
+            <div className="bg-white rounded-2xl border border-red-200 shadow-sm overflow-hidden">
+              <div className="px-5 py-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-red-600">Reset Ledger Data</p>
+                    <p className="text-xs text-[#86868b] mt-0.5">Wipe all transaction history to start a fresh cycle.</p>
+                  </div>
+                  <button
+                    onClick={handleResetLedger}
+                    className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition-all hover:bg-red-100 active:scale-[0.97]"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </div>
         )}
 
