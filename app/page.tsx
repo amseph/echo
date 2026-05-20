@@ -668,6 +668,41 @@ export default function Home() {
           const totalOutflows = totalExpenses;
           const chartTotal = chartData.reduce((sum, c) => sum + c.value, 0);
 
+// 1. Calculate Broke Prediction Date
+const sevenDaysAgoCalc = new Date();
+sevenDaysAgoCalc.setDate(sevenDaysAgoCalc.getDate() - 7);
+const recentExpensesCalc = transactions.filter(t => t.transaction_type === 'expense' && new Date(t.transaction_date) >= sevenDaysAgoCalc);
+const totalRecentSpentCalc = recentExpensesCalc.reduce((sum, t) => sum + Number(t.amount), 0);
+const dailyAverageSpendCalc = totalRecentSpentCalc / 7;
+let brokeDateText = "Infinite Runway 🚀";
+if (netBalance <= 0) {
+  brokeDateText = "You are already broke 💀";
+} else if (dailyAverageSpendCalc > 0) {
+  const daysRemaining = Math.floor(netBalance / dailyAverageSpendCalc);
+  const targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() + daysRemaining);
+  if (daysRemaining === 0) brokeDateText = "Today (Check your pockets!) 🚨";
+  else if (daysRemaining === 1) brokeDateText = "Tomorrow ⏳";
+  else brokeDateText = targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+}
+
+// 2. Dynamic Financial Vibe Check Badge
+let vibeTitle = "Pure Hermit Mode 🧘♂️";
+let vibeDesc = "No expenses logged yet. Are you even alive?";
+if (burnPercentage > 0 && burnPercentage < 25) {
+  vibeTitle = "Kuripot Master 🪙";
+  vibeDesc = "Solid discipline. Your wallet is safe from impulse checkouts.";
+} else if (burnPercentage >= 25 && burnPercentage < 60) {
+  vibeTitle = "Balanced Lifestyle ⚖️";
+  vibeDesc = "Surviving beautifully. Clean balance between wants and needs.";
+} else if (burnPercentage >= 60 && burnPercentage < 85) {
+  vibeTitle = "Petsa de Peligro Approaching 🚨";
+  vibeDesc = "The velocity of your spending is getting sketchy. Slow down!";
+} else if (burnPercentage >= 85) {
+  vibeTitle = "Walang-Wala Mode 💸";
+  vibeDesc = "Your budget is in critical condition. Instant noodles era has officially arrived.";
+}
+
           return (
           <div className="max-w-md mx-auto space-y-6 pt-4 pb-24">
 
@@ -770,7 +805,24 @@ export default function Home() {
               </div>
             </div>
 
-          </div>
+                      {/* Broke Clock Card */}
+            <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm p-5 space-y-2">
+              <p className="text-xs font-medium uppercase tracking-wider text-[#86868b] mb-1">Predicted Broke Date</p>
+              <p className={`text-2xl font-bold tracking-tight ${netBalance < totalAllowance * 0.05 || (brokeDateText.includes('Today') || brokeDateText.includes('Tomorrow')) ? 'text-red-500' : 'text-[#1d1d1f]'}`}>{brokeDateText}</p>
+              <p className="text-xs text-[#86868b] mt-1">Based on your spending speed over the past 7 days.</p>
+            </div>
+
+            {/* Vibe Check Roast Card */}
+            <div className="bg-[#f5f5f7] rounded-2xl p-5 border border-[#e8e8ed]">
+              <p className="text-base font-semibold text-[#1d1d1f] mb-1">{vibeTitle}</p>
+              <p className="text-sm text-[#424245] leading-relaxed">{vibeDesc}</p>
+              {totalDebt > 0 && (
+                <div className="mt-3 pt-2 border-t border-[#e8e8ed]/60 text-xs font-medium text-amber-600">
+                  ⚠️ Utang Alert: You owe someone ₱{totalDebt.toFixed(2)}. Reminder: clear this or your karma points will suffer.
+                </div>
+              )}
+            </div>
+            </div>
           );
         })()}
 
