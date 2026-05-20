@@ -29,6 +29,16 @@ export default function Home() {
   const [initialCategory, setInitialCategory] = useState('Parents / Family');
   const [cycleType, setCycleType] = useState('monthly');
   const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'settings'>('home');
+  const [direction, setDirection] = useState(0);
+
+  const handleTabChange = (newTab: 'home' | 'analytics' | 'settings') => {
+    const tabs = ['home', 'analytics', 'settings'];
+    const newIdx = tabs.indexOf(newTab);
+    const oldIdx = tabs.indexOf(activeTab);
+    setDirection(newIdx > oldIdx ? 1 : -1);
+    setActiveTab(newTab);
+  };
+
   const [isMounted, setIsMounted] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [customCategory, setCustomCategory] = useState('');
@@ -56,7 +66,7 @@ export default function Home() {
       const { error } = await supabase.from('transactions').delete().eq('user_id', user.id);
       if (!error) {
         setTransactions([]);
-        setActiveTab('home');
+        handleTabChange('home');
       } else {
         alert('Error resetting data: ' + error.message);
       }
@@ -378,7 +388,7 @@ export default function Home() {
       ) : (
         /* Case 3: Redesigned dashboard */
         <>
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" custom={direction}>
           {activeTab === 'home' && (() => {
             const homeBurnPct = totalAllowance > 0 ? Math.min(Math.round((totalExpenses / totalAllowance) * 100), 100) : 0;
             const homeDaysAgo = new Date(); homeDaysAgo.setDate(homeDaysAgo.getDate() - 7);
@@ -410,8 +420,14 @@ export default function Home() {
               visible: { opacity: 1, x: 0, transition: { duration: 0.22, ease: 'easeOut' } },
             };
 
+            const tabVariants: Variants = {
+              initial: (dir: number) => ({ opacity: 0, x: dir > 0 ? 20 : -20 }),
+              animate: { opacity: 1, x: 0 },
+              exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -20 : 20 }),
+            };
+
             return (
-              <motion.div key="home" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="mx-auto max-w-5xl space-y-5 pb-24">
+              <motion.div key="home" custom={direction} variants={tabVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }} className="mx-auto max-w-5xl space-y-5 pb-24">
                 {/* HEADER */}
                 <div className="bg-[#1d2d2a] rounded-3xl px-6 py-5 flex items-center justify-between">
                   <div>
@@ -420,7 +436,7 @@ export default function Home() {
                     <p className="text-xs text-[#b7e887]/60 mt-0.5">Expense &amp; Cashflow Habit Observer</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setActiveTab(prev => prev === 'settings' ? 'home' : 'settings')}
+                    <button onClick={() => handleTabChange('settings')}
                       className="hidden md:flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.99l1.005.828c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
@@ -658,8 +674,14 @@ export default function Home() {
               vibeDesc = "Your budget is in critical condition. Instant noodles era has officially arrived.";
             }
 
+            const tabVariants: Variants = {
+              initial: (dir: number) => ({ opacity: 0, x: dir > 0 ? 20 : -20 }),
+              animate: { opacity: 1, x: 0 },
+              exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -20 : 20 }),
+            };
+
             return (
-              <motion.div key="analytics" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
+              <motion.div key="analytics" custom={direction} variants={tabVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }}>
               <div className="max-w-md mx-auto space-y-6 pt-4 pb-24">
 
                 {/* Header */}
@@ -782,14 +804,21 @@ export default function Home() {
             );
           })()}
 
-          {activeTab === 'settings' && (
-            <motion.div key="settings" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="max-w-md mx-auto space-y-6 pt-4 pb-24">
+          {activeTab === 'settings' && (() => {
+            const tabVariants: Variants = {
+              initial: (dir: number) => ({ opacity: 0, x: dir > 0 ? 20 : -20 }),
+              animate: { opacity: 1, x: 0 },
+              exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -20 : 20 }),
+            };
+
+            return (
+            <motion.div key="settings" custom={direction} variants={tabVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }} className="max-w-md mx-auto space-y-6 pt-4 pb-24">
 
               {/* Title Block */}
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-semibold text-[#1d1d1f]">Settings</h2>
                 <button
-                  onClick={() => setActiveTab('home')}
+                  onClick={() => handleTabChange('home')}
                   className="text-xs font-medium text-[#0071e3] hover:underline"
                 >
                   Done
@@ -853,28 +882,28 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-
             </motion.div>
-          )}
+            );
+          })()}
           </AnimatePresence>
 
           {/* MOBILE BOTTOM NAVIGATION BAR */}
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-t border-[#e8e8ed] py-2 px-6 flex justify-around md:hidden">
-            <button onClick={() => setActiveTab('home')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'home' ? 'text-[#1d1d1f]' : 'text-[#86868b]'}`}>
+            <button onClick={() => handleTabChange('home')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'home' ? 'text-[#1d1d1f]' : 'text-[#86868b]'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
               </svg>
               <span className="text-[10px] font-medium">Home</span>
             </button>
 
-            <button onClick={() => setActiveTab('analytics')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'analytics' ? 'text-[#1d1d1f]' : 'text-[#86868b]'}`}>
+            <button onClick={() => handleTabChange('analytics')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'analytics' ? 'text-[#1d1d1f]' : 'text-[#86868b]'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
               </svg>
               <span className="text-[10px] font-medium">Analytics</span>
             </button>
 
-            <button onClick={() => setActiveTab('settings')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'settings' ? 'text-[#1d1d1f]' : 'text-[#86868b]'}`}>
+            <button onClick={() => handleTabChange('settings')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'settings' ? 'text-[#1d1d1f]' : 'text-[#86868b]'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.99l1.005.828c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
