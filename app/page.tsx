@@ -372,294 +372,234 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        
-        /* Case 3: The standard main operational dashboard layout grid (Existing UI Code) */
+        /* Case 3: Redesigned dashboard */
         <>
-        {activeTab === 'home' && (
-          <div className="mx-auto max-w-5xl space-y-6">
-          {/* HEADER */}
-          <div className="flex items-start justify-between border-b border-[#e8e8ed] pb-6 mb-8">
-            <div>
-              <h1 className="text-3xl font-semibold tracking-tight text-[#1d1d1f]">ECHO</h1>
-              <p className="mt-1 text-xs font-medium uppercase tracking-wider text-[#86868b]">
-                Expense & Cashflow Habit Observer
-              </p>
+        {activeTab === 'home' && (() => {
+          const homeBurnPct = totalAllowance > 0 ? Math.min(Math.round((totalExpenses / totalAllowance) * 100), 100) : 0;
+          const homeDaysAgo = new Date(); homeDaysAgo.setDate(homeDaysAgo.getDate() - 7);
+          const homeRecent = transactions.filter(t => t.transaction_type === 'expense' && new Date(t.transaction_date) >= homeDaysAgo);
+          const homeAvgSpend = homeRecent.reduce((s, t) => s + Number(t.amount), 0) / 7;
+          let homeBrokeText = 'Infinite Runway 🚀';
+          if (netBalance <= 0) homeBrokeText = 'Already broke 💀';
+          else if (homeAvgSpend > 0) {
+            const dr = Math.floor(netBalance / homeAvgSpend);
+            const td = new Date(); td.setDate(td.getDate() + dr);
+            if (dr === 0) homeBrokeText = 'Today 🚨';
+            else if (dr === 1) homeBrokeText = 'Tomorrow ⏳';
+            else homeBrokeText = td.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+          }
+          let homeVibeTitle = 'Pure Hermit Mode 🧘';
+          let homeVibeDesc = 'No expenses logged yet. Are you even alive?';
+          if (homeBurnPct > 0 && homeBurnPct < 25) { homeVibeTitle = 'Kuripot Master 🪙'; homeVibeDesc = 'Solid discipline. Wallet safe from impulse buys.'; }
+          else if (homeBurnPct >= 25 && homeBurnPct < 60) { homeVibeTitle = 'Balanced Lifestyle ⚖️'; homeVibeDesc = 'Surviving beautifully. Clean balance of wants and needs.'; }
+          else if (homeBurnPct >= 60 && homeBurnPct < 85) { homeVibeTitle = 'Petsa de Peligro 🚨'; homeVibeDesc = 'Spending velocity getting sketchy. Slow down!'; }
+          else if (homeBurnPct >= 85) { homeVibeTitle = 'Walang-Wala Mode 💸'; homeVibeDesc = 'Budget critical. Instant noodles era has arrived.'; }
+          const isCritical = netBalance <= 0 || homeBrokeText === 'Today 🚨' || homeBrokeText === 'Tomorrow ⏳';
+          return (
+          <div className="mx-auto max-w-5xl space-y-5 pb-24">
+            {/* HEADER */}
+            <div className="bg-[#1d2d2a] rounded-3xl px-6 py-5 flex items-center justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#b7e887]/70 mb-0.5">ECHO Dashboard</p>
+                <h1 className="text-2xl font-bold text-white tracking-tight">Hello, {userEmail ? userEmail.split('@')[0] : 'User'} 👋</h1>
+                <p className="text-xs text-[#b7e887]/60 mt-0.5">Expense &amp; Cashflow Habit Observer</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setActiveTab(prev => prev === 'settings' ? 'home' : 'settings')}
+                  className="hidden md:flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.99l1.005.828c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  </svg>
+                </button>
+                <button onClick={handleSignOut} className="flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-2 text-xs font-medium text-white hover:bg-white/20 transition-all">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                  </svg>
+                  Sign Out
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              {/* Desktop Settings Button */}
-              <button
-                onClick={() => setActiveTab(prev => prev === 'settings' ? 'home' : 'settings')}
-                className="hidden md:flex items-center gap-2 rounded-xl border border-[#d2d2d7] bg-white px-4 py-2 text-xs font-medium text-[#1d1d1f] shadow-sm transition-all duration-200 hover:bg-[#f5f5f7] active:scale-[0.98]"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5 text-[#86868b]">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.99l1.005.828c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                </svg>
-                Settings
-              </button>
+            {/* METRIC CARDS */}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Allowance</p>
+                <p className="text-xl font-bold text-[#1d2d2a] mt-1">₱{totalAllowance.toFixed(2)}</p>
+                <p className="text-[10px] text-green-500 mt-1 font-medium">● Inflow this cycle</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Expenses</p>
+                <p className="text-xl font-bold text-[#1d1d1f] mt-1">₱{totalExpenses.toFixed(2)}</p>
+                <p className="text-[10px] text-gray-400 mt-1 font-medium">{homeBurnPct}% of budget</p>
+              </div>
+              <div className={`rounded-2xl border shadow-sm p-4 ${totalDebt > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-gray-100'}`}>
+                <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Debt</p>
+                <p className="text-xl font-bold text-amber-700 mt-1">₱{totalDebt.toFixed(2)}</p>
+                <p className="text-[10px] text-amber-500 mt-1 font-medium">{totalDebt > 0 ? '⚠ Outstanding' : '● Clear'}</p>
+              </div>
+              <div className={`rounded-2xl border shadow-sm p-4 ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Net Balance</p>
+                <p className={`text-xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : 'text-blue-600'}`}>₱{netBalance.toFixed(2)}</p>
+                <p className={`text-[10px] mt-1 font-medium ${netBalance <= 0 ? 'text-red-400' : 'text-blue-400'}`}>{netBalance <= 0 ? '● Deficit' : '● Available'}</p>
+              </div>
+              <div className={`rounded-2xl border shadow-sm p-4 ${daysRemaining !== null && daysRemaining <= 3 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Runway</p>
+                <p className={`text-xl font-bold mt-1 ${daysRemaining === null || netBalance <= 0 ? 'text-gray-300' : daysRemaining <= 3 ? 'text-red-500' : 'text-[#1d1d1f]'}`}>
+                  {daysRemaining === null || netBalance <= 0 ? '—' : `${daysRemaining}d`}
+                </p>
+                <p className="text-[10px] text-gray-400 mt-1 font-medium">₱{dailyAverageSpend.toFixed(0)}/day avg</p>
+              </div>
+            </div>
 
-              {/* Apple-style Minimalist Sign Out Button */}
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-2 rounded-xl border border-[#d2d2d7] bg-white px-4 py-2 text-xs font-medium text-[#1d1d1f] shadow-sm transition-all duration-200 hover:bg-[#f5f5f7] active:scale-[0.98]"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5 text-[#86868b]">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-                </svg>
-                Sign Out
-              </button>
+            {/* PREDICTIVE INSIGHT STRIP */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className={`rounded-2xl border p-4 ${isCritical ? 'bg-red-50 border-red-200' : 'bg-[#1d2d2a]/5 border-[#1d2d2a]/10'}`}>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#86868b] mb-1">Predicted Broke Date</p>
+                <p className={`text-2xl font-bold tracking-tight ${isCritical ? 'text-red-500' : 'text-[#1d1d1f]'}`}>{homeBrokeText}</p>
+                <p className="text-[10px] text-[#86868b] mt-1">Based on 7-day spending velocity</p>
+              </div>
+              <div className={`rounded-2xl border p-4 ${homeBurnPct >= 85 ? 'bg-red-50 border-red-300' : homeBurnPct >= 60 ? 'bg-amber-50 border-amber-200' : 'bg-[#f5f5f7] border-[#e8e8ed]'}`}>
+                <p className="text-base font-bold text-[#1d1d1f] mb-0.5">{homeVibeTitle}</p>
+                <p className="text-xs text-[#424245] leading-relaxed">{homeVibeDesc}</p>
+                {totalDebt > 0 && <p className="text-[11px] font-medium text-amber-600 mt-2 pt-2 border-t border-amber-200">⚠️ Utang Alert: You owe ₱{totalDebt.toFixed(2)}. Clear this soon!</p>}
+              </div>
             </div>
-          </div>
 
-          {/* METRIC CARDS OVERVIEW */}
-          <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 w-full max-w-4xl">
-            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Allowance</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">₱{totalAllowance.toFixed(2)}</p>
-            </div>
-            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Expenses</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">₱{totalExpenses.toFixed(2)}</p>
-            </div>
-            <div className="bg-amber-50 p-5 rounded-2xl border border-amber-200 shadow-sm">
-              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider">Total Debt</p>
-              <p className="text-2xl font-bold text-amber-700 mt-1">₱{totalDebt.toFixed(2)}</p>
-            </div>
-            <div className={`p-5 rounded-2xl border shadow-sm ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Net Balance</p>
-              <p className={`text-2xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : 'text-blue-600'}`}>
-                ₱{netBalance.toFixed(2)}
-              </p>
-            </div>
-            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Wallet Runway</p>
-              <p className={`text-2xl font-bold mt-1 ${
-                daysRemaining === null || netBalance <= 0
-                  ? 'text-gray-300'
-                  : daysRemaining <= 3
-                  ? 'text-red-500'
-                  : 'text-[#1d1d1f]'
-              }`}>
-                {daysRemaining === null || netBalance <= 0 ? '—' : `${daysRemaining} Days`}
-              </p>
-              <p className="text-[10px] text-gray-400 mt-1 font-medium">
-                Avg. ₱{dailyAverageSpend.toFixed(2)}/day
-              </p>
-            </div>
-          </div>
-
-          {/* MAIN CONTENT SPLIT */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full max-w-4xl items-start">
-
-            {/* LEFT COLUMN: FORM & VISUALIZATION */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* Input Form Card */}
-              <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4">Log Transaction</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                      Date <span className="text-gray-400 font-normal ml-1.5">• {formData.allowance_cycle}</span>
-                    </label>
-                    <input
-                      type="date"
-                      required
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                      value={formData.transaction_date}
-                      onChange={(e) => {
-                        const newDate = e.target.value;
-                        setFormData({
-                          ...formData,
-                          transaction_date: newDate,
-                          allowance_cycle: getAllowanceCycle(newDate) // Dynamic calculation!
-                        });
-                      }}
-                    />
+            {/* MAIN CONTENT GRID */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+              {/* LEFT: FORM + CHART */}
+              <div className="lg:col-span-7 space-y-5">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-sm font-bold text-[#1d1d1f] tracking-tight">Log Transaction</h2>
+                    <span className="text-[10px] text-[#86868b] bg-[#f5f5f7] rounded-lg px-2 py-1 font-medium">{formData.allowance_cycle}</span>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Type</label>
-                      <select
-                        className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm bg-white"
-                        value={formData.transaction_type}
-                        onChange={(e) => handleTypeChange(e.target.value)}
-                      >
+                  <form onSubmit={handleSubmit} className="space-y-3">
+                    <input type="date" required
+                      className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                      value={formData.transaction_date}
+                      onChange={(e) => { const d = e.target.value; setFormData({ ...formData, transaction_date: d, allowance_cycle: getAllowanceCycle(d) }); }} />
+                    <div className="grid grid-cols-2 gap-3">
+                      <select className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm bg-white text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                        value={formData.transaction_type} onChange={(e) => handleTypeChange(e.target.value)}>
                         <option value="expense">Expense</option>
                         <option value="allowance">Allowance</option>
                         <option value="shortage_request">Shortage</option>
                         <option value="debt">Debt</option>
                       </select>
+                      <input type="number" step="0.01" required placeholder="₱ 0.00"
+                        className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                        value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
                     </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Amount</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        required
-                        placeholder="0.00"
-                        className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                        value={formData.amount}
-                        onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    {/* Clean Dropdown Selector for Categories */}
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                      {formData.transaction_type === 'debt' ? 'Lender / Source (Kanino / Saan)' : 'Category'}
-                    </label>
                     {formData.transaction_type === 'debt' ? (
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g., Juan, Aling Nena, Canteen"
-                        className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                        value={formData.expense_category}
-                        onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })}
-                      />
+                      <input type="text" required placeholder="Lender (e.g. Juan, Aling Nena)"
+                        className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                        value={formData.expense_category} onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })} />
                     ) : (
-                      <select
-                        className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm bg-white"
-                        value={formData.expense_category}
-                        onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })}
-                      >
-                        {formData.transaction_type === 'allowance' ? (
-                          <>
-                            <option value="Regular Weekly Allowance">Regular Weekly Allowance</option>
-                            <option value="Parents / Family">Parents / Family</option>
-                            <option value="Scholarship / Stipend">Scholarship / Stipend</option>
-                            <option value="Other Income">Other Income</option>
-                            <option value="debt_payment">Pay Back Debt (Bayad Utang)</option>
-                          </>
-                        ) : formData.transaction_type === 'shortage_request' ? (
-                          <>
-                            <option value="Emergency / Shortage">Emergency / Shortage</option>
-                            <option value="Food Shortage">Food Shortage</option>
-                            <option value="Transport Shortage">Transport Shortage</option>
-                          </>
-                        ) : (
-                          <>
-                            <option value="Food">Food</option>
-                            <option value="Transportation">Transportation</option>
-                            <option value="Education / Supplies">Education / Supplies</option>
-                            <option value="Entertainment">Entertainment</option>
-                            <option value="Utilities / Bills">Utilities / Bills</option>
-                            <option value="Other">Other</option>
-                          </>
-                        )}
+                      <select className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm bg-white text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                        value={formData.expense_category} onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })}>
+                        {formData.transaction_type === 'allowance' ? (<>
+                          <option value="Regular Weekly Allowance">Regular Weekly Allowance</option>
+                          <option value="Parents / Family">Parents / Family</option>
+                          <option value="Scholarship / Stipend">Scholarship / Stipend</option>
+                          <option value="Other Income">Other Income</option>
+                          <option value="debt_payment">Pay Back Debt (Bayad Utang)</option>
+                        </>) : formData.transaction_type === 'shortage_request' ? (<>
+                          <option value="Emergency / Shortage">Emergency / Shortage</option>
+                          <option value="Food Shortage">Food Shortage</option>
+                          <option value="Transport Shortage">Transport Shortage</option>
+                        </>) : (<>
+                          <option value="Food">Food</option>
+                          <option value="Transportation">Transportation</option>
+                          <option value="Education / Supplies">Education / Supplies</option>
+                          <option value="Entertainment">Entertainment</option>
+                          <option value="Utilities / Bills">Utilities / Bills</option>
+                          <option value="Other">Other</option>
+                        </>)}
                       </select>
                     )}
-
                     {formData.expense_category === 'Other' && (
-                      <input
-                        type="text"
-                        required
-                        placeholder="Specify category"
-                        maxLength={25}
-                        className="w-full mt-2 px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm"
-                        value={customCategory}
-                        onChange={(e) => setCustomCategory(e.target.value)}
-                      />
+                      <input type="text" required placeholder="Specify category" maxLength={25}
+                        className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                        value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} />
                     )}
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full mt-2 bg-black text-white py-2.5 rounded-lg font-medium text-sm hover:bg-gray-800 transition-colors disabled:bg-gray-400"
-                  >
-                    {loading ? 'Saving...' : 'Record Transaction'}
-                  </button>
-                </form>
-
-                {message.text && (
-                  <div className={`mt-4 p-3 rounded-lg text-sm text-center font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-                    {message.text}
-                  </div>
-                )}
-              </div>
-
-              {/* Chart Analytics Card */}
-              <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Expense Distribution</h2>
-                {isMounted && chartData.length > 0 ? (
-                  <div className="h-48 w-full flex items-center justify-center">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={chartData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={55}
-                          outerRadius={75}
-                          paddingAngle={4}
-                          dataKey="value"
-                        >
-                          {chartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip formatter={(value) => `₱${Number(value).toFixed(2)}`} />
-                      </PieChart>
-                    </ResponsiveContainer>
-
-                    <div className="text-xs space-y-1.5 ml-4">
-                      {chartData.map((entry, index) => (
-                        <div key={entry.name} className="flex items-center space-x-2">
-                          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                          <span className="text-gray-600 font-medium">{entry.name}:</span>
-                          <span className="text-gray-900 font-bold">₱{entry.value.toFixed(2)}</span>
-                        </div>
-                      ))}
+                    <button type="submit" disabled={loading}
+                      className="w-full bg-[#1d2d2a] text-[#b7e887] py-3 rounded-xl font-semibold text-sm hover:bg-[#253d38] active:scale-[0.98] transition-all disabled:opacity-50">
+                      {loading ? 'Saving...' : 'Record Transaction'}
+                    </button>
+                  </form>
+                  {message.text && (
+                    <div className={`mt-3 p-3 rounded-xl text-xs text-center font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                      {message.text}
                     </div>
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-400 text-center py-12">Log expenses to generate category metrics.</p>
-                )}
-              </div>
-            </div>
-
-            {/* RIGHT COLUMN: TRANSACTION HISTORY LIST */}
-            <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm h-full max-h-[580px] overflow-y-auto">
-              <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4">Transaction History</h2>
-
-              {transactions.length === 0 ? (
-                <p className="text-xs text-gray-400 text-center py-8">No transactions recorded yet.</p>
-              ) : (
-                <div className="divide-y divide-gray-100">
-                  {transactions.map((tx) => (
-                    <div key={tx.id} className="flex justify-between items-center py-3">
-                      <div>
-                        <p className="font-medium text-sm text-[#1d1d1f]">
-                          {tx.transaction_type === 'debt_payment' ? 'Paid Back Loan (Soli)' : tx.expense_category}
-                        </p>
-                        <p className="text-xs text-[#86868b]">{tx.transaction_date} • {tx.allowance_cycle}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className={`font-semibold text-sm ${
-                          tx.transaction_type === 'allowance' || tx.transaction_type === 'shortage_request' || tx.transaction_type === 'debt'
-                            ? 'text-green-600' 
-                            : 'text-red-500' // Debt payments reflect a minus status for wallet cashflow
-                        }`}>
-                          {tx.transaction_type === 'debt_payment' ? `- ₱${parseFloat(tx.amount).toFixed(2)}` : `${tx.transaction_type === 'expense' ? '-' : '+'} ₱${parseFloat(tx.amount).toFixed(2)}`}
-                        </p>
-                        <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b]">
-                          {tx.transaction_type === 'debt_payment' ? 'Settlement' : tx.transaction_type.replace('_', ' ')}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                  )}
                 </div>
-              )}
+                {/* CHART */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                  <h2 className="text-sm font-bold text-[#1d1d1f] tracking-tight mb-3">Expense Distribution</h2>
+                  {isMounted && chartData.length > 0 ? (
+                    <div className="flex items-center gap-4">
+                      <div className="h-40 w-40 flex-shrink-0">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie data={chartData} cx="50%" cy="50%" innerRadius={42} outerRadius={62} paddingAngle={4} dataKey="value">
+                              {chartData.map((_, index) => <Cell key={index} fill={['#1d2d2a','#2d4a3e','#b7e887','#86c46a','#5a8f4a'][index % 5]} />)}
+                            </Pie>
+                            <Tooltip formatter={(v) => `₱${Number(v).toFixed(2)}`} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="flex-1 space-y-1.5 min-w-0">
+                        {chartData.map((entry, i) => (
+                          <div key={entry.name} className="flex items-center justify-between text-xs gap-2">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: ['#1d2d2a','#2d4a3e','#b7e887','#86c46a','#5a8f4a'][i % 5] }} />
+                              <span className="text-[#424245] truncate">{entry.name}</span>
+                            </div>
+                            <span className="font-bold text-[#1d1d1f] flex-shrink-0">₱{entry.value.toFixed(2)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-400 text-center py-10">Log expenses to generate distribution.</p>
+                  )}
+                </div>
+              </div>
+              {/* RIGHT: LEDGER */}
+              <div className="lg:col-span-5 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 max-h-[640px] overflow-y-auto">
+                <h2 className="text-sm font-bold text-[#1d1d1f] tracking-tight mb-3 sticky top-0 bg-white pb-2 border-b border-gray-100">Transaction History</h2>
+                {transactions.length === 0 ? (
+                  <p className="text-xs text-gray-400 text-center py-10">No transactions yet.</p>
+                ) : (
+                  <div className="space-y-1">
+                    {transactions.map((tx) => {
+                      const isInflow = tx.transaction_type === 'allowance' || tx.transaction_type === 'shortage_request' || tx.transaction_type === 'debt';
+                      const isDebtPay = tx.transaction_type === 'debt_payment';
+                      return (
+                        <div key={tx.id} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium text-sm text-[#1d1d1f] truncate">{isDebtPay ? 'Paid Back Loan (Soli)' : tx.expense_category}</p>
+                            <p className="text-[10px] text-[#86868b]">{tx.transaction_date} · {tx.allowance_cycle}</p>
+                          </div>
+                          <div className="text-right ml-3 flex-shrink-0">
+                            <p className={`font-bold text-sm ${isInflow ? 'text-green-600' : 'text-[#1d1d1f]'}`}>
+                              {isDebtPay ? `−₱${parseFloat(tx.amount).toFixed(2)}` : `${isInflow ? '+' : '−'}₱${parseFloat(tx.amount).toFixed(2)}`}
+                            </p>
+                            <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b]">{isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
-
           </div>
-        </div>
-        )}
+          );
+        })()}
+
 
         {activeTab === 'analytics' && (() => {
           const burnPercentage = totalAllowance > 0 ? Math.min(Math.round((totalExpenses / totalAllowance) * 100), 100) : 0;
