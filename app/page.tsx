@@ -131,12 +131,28 @@ export default function Home() {
 
     try {
       const categoryToSend = formData.expense_category === 'Other' ? customCategory : formData.expense_category;
+      const transactionType = formData.expense_category === 'debt_payment' ? 'debt_payment' : formData.transaction_type;
+      const amount = formData.amount;
+
+      if (transactionType === 'debt_payment') {
+        if (parseFloat(amount) > totalDebt) {
+          alert(`Validation Error: You cannot pay back more than your current total debt of ₱${totalDebt.toFixed(2)}.`);
+          setLoading(false);
+          return; // Kill execution early
+        }
+        
+        if (parseFloat(amount) > netBalance) {
+          alert(`Validation Error: Insufficient funds. Your current net balance is ₱${netBalance.toFixed(2)}, you cannot afford this payment.`);
+          setLoading(false);
+          return; // Kill execution early
+        }
+      }
 
       const { error } = await supabase.from('transactions').insert([
         {
           transaction_date: formData.transaction_date,
-          transaction_type: formData.transaction_type,
-          amount: parseFloat(formData.amount),
+          transaction_type: transactionType,
+          amount: parseFloat(amount),
           expense_category: categoryToSend,
           allowance_cycle: formData.allowance_cycle,
         },
@@ -301,6 +317,7 @@ export default function Home() {
                         <option value="Parents / Family">Parents / Family</option>
                         <option value="Scholarship / Stipend">Scholarship / Stipend</option>
                         <option value="Other Income">Other Income</option>
+                        <option value="debt_payment">Pay Back Debt (Bayad Utang)</option>
                       </>
                     ) : formData.transaction_type === 'shortage_request' ? (
                       <>
@@ -398,17 +415,25 @@ export default function Home() {
             <p className="text-xs text-gray-400 text-center py-8">No transactions recorded yet.</p>
           ) : (
             <div className="divide-y divide-gray-100">
-              {transactions.map((t) => (
-                <div key={t.id} className="flex items-center justify-between py-3 text-sm">
-                  <div className="pr-2 truncate">
-                    <p className="font-semibold text-gray-800 truncate">{t.expense_category}</p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">{t.transaction_date} • {t.allowance_cycle}</p>
+              {transactions.map((tx) => (
+                <div key={tx.id} className="flex justify-between items-center py-3">
+                  <div>
+                    <p className="font-medium text-sm text-[#1d1d1f]">
+                      {tx.transaction_type === 'debt_payment' ? 'Paid Back Loan (Soli)' : tx.expense_category}
+                    </p>
+                    <p className="text-xs text-[#86868b]">{tx.transaction_date} • {tx.allowance_cycle}</p>
                   </div>
-                  <div className="text-right flex-shrink-0">
-                    <span className={`font-bold ${t.transaction_type === 'allowance' ? 'text-green-600' : t.transaction_type === 'shortage_request' ? 'text-amber-600' : 'text-gray-900'}`}>
-                      {t.transaction_type === 'expense' ? '-' : '+'} ₱{parseFloat(t.amount).toFixed(2)}
-                    </span>
-                    <p className="text-[9px] text-gray-400 uppercase tracking-wider font-semibold mt-0.5">{t.transaction_type.replace('_', ' ')}</p>
+                  <div className="text-right">
+                    <p className={`font-semibold text-sm ${
+                      tx.transaction_type === 'allowance' || tx.transaction_type === 'shortage_request' || tx.transaction_type === 'debt'
+                        ? 'text-green-600' 
+                        : 'text-red-500' // Debt payments reflect a minus status for wallet cashflow
+                    }`}>
+                      {tx.transaction_type === 'debt_payment' ? `- ₱${parseFloat(tx.amount).toFixed(2)}` : `${tx.transaction_type === 'expense' ? '-' : '+'} ₱${parseFloat(tx.amount).toFixed(2)}`}
+                    </p>
+                    <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b]">
+                      {tx.transaction_type === 'debt_payment' ? 'Settlement' : tx.transaction_type.replace('_', ' ')}
+                    </p>
                   </div>
                 </div>
               ))}
