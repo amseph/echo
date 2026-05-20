@@ -25,6 +25,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [initialAllowance, setInitialAllowance] = useState('');
+  const [initialCategory, setInitialCategory] = useState('Parents / Family');
   const [isMounted, setIsMounted] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [customCategory, setCustomCategory] = useState('');
@@ -61,7 +62,7 @@ export default function Home() {
             user_id: user.id,
             transaction_type: 'allowance',
             amount: parseFloat(initialAllowance),
-            expense_category: 'Parents / Family',
+            expense_category: initialCategory,
             transaction_date: todayDate,
             allowance_cycle: getAllowanceCycle(todayDate),
           }
@@ -69,6 +70,7 @@ export default function Home() {
 
       if (!error) {
         setInitialAllowance('');
+        setInitialCategory('Parents / Family');
         await fetchTransactions();
       } else {
         setLoading(false);
@@ -271,6 +273,20 @@ export default function Home() {
                   onChange={(e) => setInitialAllowance(e.target.value)}
                   className="w-full rounded-xl border border-[#d2d2d7] px-4 py-3 text-sm placeholder-[#86868b] outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
                 />
+              </div>
+
+              <div className="text-left">
+                <label className="block text-xs font-medium text-[#86868b] mb-1 pl-1">Category</label>
+                <select
+                  value={initialCategory}
+                  onChange={(e) => setInitialCategory(e.target.value)}
+                  className="w-full rounded-xl border border-[#d2d2d7] px-4 py-3 text-sm bg-white outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
+                >
+                  <option value="Regular Weekly Allowance">Regular Weekly Allowance</option>
+                  <option value="Parents / Family">Parents / Family</option>
+                  <option value="Scholarship / Stipend">Scholarship / Stipend</option>
+                  <option value="Other Income">Other Income</option>
+                </select>
               </div>
 
               <button
