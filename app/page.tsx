@@ -237,6 +237,22 @@ export default function Home() {
 
   const COLORS = ['#000000', '#4B5563', '#9CA3AF', '#D1D5DB', '#E5E7EB'];
 
+  // --- RUNWAY CALCULATION ---
+  // 1. Get transactions from the last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const recentExpenses = transactions.filter((t) => {
+    return t.transaction_type === 'expense' && new Date(t.transaction_date) >= sevenDaysAgo;
+  });
+
+  // 2. Calculate average daily spend
+  const totalRecentSpent = recentExpenses.reduce((sum, t) => sum + Number(t.amount), 0);
+  const dailyAverageSpend = totalRecentSpent / 7;
+
+  // 3. Calculate remaining days of runway
+  const daysRemaining = dailyAverageSpend > 0 ? Math.floor(netBalance / dailyAverageSpend) : null;
+
   return (
     <div className="min-h-screen bg-[#f5f5f7] px-4 py-8 font-sans antialiased text-[#1d1d1f]">
       
@@ -341,7 +357,7 @@ export default function Home() {
           </div>
 
           {/* METRIC CARDS OVERVIEW */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 w-full max-w-4xl">
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 w-full max-w-4xl">
             <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Allowance</p>
               <p className="text-2xl font-bold text-green-600 mt-1">₱{totalAllowance.toFixed(2)}</p>
@@ -358,6 +374,21 @@ export default function Home() {
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Net Balance</p>
               <p className={`text-2xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : 'text-blue-600'}`}>
                 ₱{netBalance.toFixed(2)}
+              </p>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Wallet Runway</p>
+              <p className={`text-2xl font-bold mt-1 ${
+                daysRemaining === null || netBalance <= 0
+                  ? 'text-gray-300'
+                  : daysRemaining <= 3
+                  ? 'text-red-500'
+                  : 'text-[#1d1d1f]'
+              }`}>
+                {daysRemaining === null || netBalance <= 0 ? '—' : `${daysRemaining} Days`}
+              </p>
+              <p className="text-[10px] text-gray-400 mt-1 font-medium">
+                Avg. ₱{dailyAverageSpend.toFixed(2)}/day
               </p>
             </div>
           </div>
