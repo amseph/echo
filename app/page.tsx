@@ -26,6 +26,7 @@ export default function Home() {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [initialAllowance, setInitialAllowance] = useState('');
   const [initialCategory, setInitialCategory] = useState('Parents / Family');
+  const [cycleType, setCycleType] = useState('monthly');
   const [isMounted, setIsMounted] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [customCategory, setCustomCategory] = useState('');
@@ -71,6 +72,7 @@ export default function Home() {
       if (!error) {
         setInitialAllowance('');
         setInitialCategory('Parents / Family');
+        localStorage.setItem('echo_allowance_cycle', cycleType);
         await fetchTransactions();
       } else {
         setLoading(false);
@@ -295,6 +297,19 @@ export default function Home() {
             </p>
 
             <form onSubmit={handleInitializeCycle} className="mt-6 space-y-4">
+              <div className="text-left">
+                <label className="block text-xs font-medium text-[#86868b] mb-1 pl-1">Budget Cycle</label>
+                <select
+                  value={cycleType}
+                  onChange={(e) => setCycleType(e.target.value)}
+                  className="w-full rounded-xl border border-[#d2d2d7] px-4 py-3 text-sm bg-white outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
+                >
+                  <option value="weekly">Weekly (Resets Mondays)</option>
+                  <option value="semi-monthly">Semi-Monthly (1st &amp; 15th)</option>
+                  <option value="monthly">Monthly (Calendar Month)</option>
+                </select>
+              </div>
+
               <div className="text-left">
                 <label className="block text-xs font-medium text-[#86868b] mb-1 pl-1">Starting Amount (₱)</label>
                 <input
