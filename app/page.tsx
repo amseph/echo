@@ -56,15 +56,19 @@ export default function Home() {
       const { data: { text } } = await Tesseract.recognize(file, 'eng');
       const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
-      // Strategy 1: Find a line with TOTAL (but not SUBTOTAL) and extract its amount
+      // Strategy 1: Find a line with target keywords and extract its amount
       let totalAmount: number | null = null;
+      const targetRegex = /\b(TOTAL|DUE|AMOUNT|GRAND\sTOTAL|NET|PAYABLE|TTL|BALANCE)\b/i;
+      const excludeRegex = /\b(SUBTOTAL|SUB\sTOTAL|ITEM)\b/i;
+
       for (const line of lines) {
-        const upper = line.toUpperCase();
-        if (upper.includes('TOTAL') && !upper.includes('SUBTOTAL') && !upper.includes('SUB TOTAL') && !upper.includes('ITEM')) {
+        if (targetRegex.test(line) && !excludeRegex.test(line)) {
           const amounts = line.match(/[\d,]+\.\d{2}/g);
           if (amounts) {
+            // Take the last decimal found on the line (typically the aligned total) instead of the highest number
             const parsed = amounts.map(a => parseFloat(a.replace(/,/g, '')));
-            totalAmount = Math.max(...parsed);
+            totalAmount = parsed[parsed.length - 1];
+            break; // Stop at the first line that matches the criteria
           }
         }
       }
