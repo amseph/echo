@@ -63,7 +63,39 @@ export default function Home() {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [customCategory, setCustomCategory] = useState('');
   const [cyclePreference, setCyclePreference] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('echo_cycle') || 'Monthly' : 'Monthly');
+  const [toneMode, setToneMode] = useState<'Coach' | 'Roast'>(() => typeof window !== 'undefined' ? (localStorage.getItem('echo_tone') as 'Coach' | 'Roast') || 'Roast' : 'Roast');
   const [userEmail, setUserEmail] = useState('');
+
+  const handleToneChange = (value: string) => {
+    setToneMode(value as 'Coach' | 'Roast');
+    localStorage.setItem('echo_tone', value);
+  };
+
+  const getVibeStrings = (burnPct: number) => {
+    if (toneMode === 'Coach') {
+      if (burnPct === 0) return { title: 'Perfectly Pristine ', desc: "You haven't spent anything yet. Keep up this great start!" };
+      if (burnPct < 25) return { title: 'Excellent Pacing ', desc: 'You are managing your funds incredibly well. Keep it up!' };
+      if (burnPct < 60) return { title: 'Steady & Balanced ', desc: 'You are right on track. Sustainable spending is key.' };
+      if (burnPct < 85) return { title: 'Caution Advised ', desc: 'You are spending a bit fast. Time to review your budget.' };
+      return { title: 'Action Required ', desc: 'Your budget is running low. Please limit non-essential expenses.' };
+    } else {
+      if (burnPct === 0) return { title: 'Pure Hermit Mode ', desc: 'No expenses logged yet. Are you even alive?' };
+      if (burnPct < 25) return { title: 'Kuripot Master ', desc: 'Solid discipline. Your wallet is safe from impulse checkouts.' };
+      if (burnPct < 60) return { title: 'Balanced Lifestyle ', desc: 'Surviving beautifully. Clean balance between wants and needs.' };
+      if (burnPct < 85) return { title: 'Petsa de Peligro ', desc: 'The velocity of your spending is getting sketchy. Slow down!' };
+      return { title: 'Walang-Wala Mode ', desc: 'Budget critical. Instant noodles era has officially arrived.' };
+    }
+  };
+
+  const getBrokeDateText = (daysRemaining: number | null, netBal: number) => {
+    if (netBal <= 0) return toneMode === 'Coach' ? 'Budget Exhausted ' : 'You are already broke ';
+    if (daysRemaining === null) return 'Infinite Runway ';
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + daysRemaining);
+    if (daysRemaining === 0) return toneMode === 'Coach' ? 'Depletes Today ' : 'Today (Check your pockets!) ';
+    if (daysRemaining === 1) return 'Tomorrow ';
+    return targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+  };
   const [scanning, setScanning] = useState(false);
   const receiptInputRef = useRef<HTMLInputElement>(null);
 
@@ -372,12 +404,7 @@ export default function Home() {
 
   // --- VIBE CHECK (component-level for notifications) ---
   const burnPct = totalAllowance > 0 ? Math.min(Math.round((totalExpenses / totalAllowance) * 100), 100) : 0;
-  let vibeNotifTitle = 'Pure Hermit Mode ';
-  let vibeNotifDesc = 'No expenses logged yet. Are you even alive?';
-  if (burnPct > 0 && burnPct < 25) { vibeNotifTitle = 'Kuripot Master '; vibeNotifDesc = 'Solid discipline. Wallet safe from impulse buys.'; }
-  else if (burnPct >= 25 && burnPct < 60) { vibeNotifTitle = 'Balanced Lifestyle '; vibeNotifDesc = 'Surviving beautifully. Clean balance of wants and needs.'; }
-  else if (burnPct >= 60 && burnPct < 85) { vibeNotifTitle = 'Petsa de Peligro '; vibeNotifDesc = 'Spending velocity getting sketchy. Slow down!'; }
-  else if (burnPct >= 85) { vibeNotifTitle = 'Walang-Wala Mode '; vibeNotifDesc = 'Budget critical. Instant noodles era has arrived.'; }
+  const { title: vibeNotifTitle, desc: vibeNotifDesc } = getVibeStrings(burnPct);
 
   // --- BROWSER NOTIFICATION ---
   useEffect(() => {
@@ -564,22 +591,10 @@ export default function Home() {
               const homeDaysAgo = new Date(); homeDaysAgo.setDate(homeDaysAgo.getDate() - 7);
               const homeRecent = transactions.filter(t => t.transaction_type === 'expense' && new Date(t.transaction_date) >= homeDaysAgo);
               const homeAvgSpend = homeRecent.reduce((s, t) => s + Number(t.amount), 0) / 7;
-              let homeBrokeText = 'Infinite Runway ';
-              if (netBalance <= 0) homeBrokeText = 'Already broke ';
-              else if (homeAvgSpend > 0) {
-                const dr = Math.floor(netBalance / homeAvgSpend);
-                const td = new Date(); td.setDate(td.getDate() + dr);
-                if (dr === 0) homeBrokeText = 'Today ';
-                else if (dr === 1) homeBrokeText = 'Tomorrow ';
-                else homeBrokeText = td.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
-              }
-              let homeVibeTitle = 'Pure Hermit Mode ';
-              let homeVibeDesc = 'No expenses logged yet. Are you even alive?';
-              if (homeBurnPct > 0 && homeBurnPct < 25) { homeVibeTitle = 'Kuripot Master '; homeVibeDesc = 'Solid discipline. Wallet safe from impulse buys.'; }
-              else if (homeBurnPct >= 25 && homeBurnPct < 60) { homeVibeTitle = 'Balanced Lifestyle '; homeVibeDesc = 'Surviving beautifully. Clean balance of wants and needs.'; }
-              else if (homeBurnPct >= 60 && homeBurnPct < 85) { homeVibeTitle = 'Petsa de Peligro '; homeVibeDesc = 'Spending velocity getting sketchy. Slow down!'; }
-              else if (homeBurnPct >= 85) { homeVibeTitle = 'Walang-Wala Mode '; homeVibeDesc = 'Budget critical. Instant noodles era has arrived.'; }
-              const isCritical = netBalance <= 0 || homeBrokeText === 'Today ' || homeBrokeText === 'Tomorrow ';
+              const homeDaysRemaining = homeAvgSpend > 0 ? Math.floor(netBalance / homeAvgSpend) : null;
+              const homeBrokeText = getBrokeDateText(homeDaysRemaining, netBalance);
+              const { title: homeVibeTitle, desc: homeVibeDesc } = getVibeStrings(homeBurnPct);
+              const isCritical = netBalance <= 0 || homeBrokeText.includes('Today') || homeBrokeText.includes('Tomorrow');
 
               const listContainer: Variants = {
                 hidden: {},
@@ -857,34 +872,11 @@ export default function Home() {
               const recentExpensesCalc = transactions.filter(t => t.transaction_type === 'expense' && new Date(t.transaction_date) >= sevenDaysAgoCalc);
               const totalRecentSpentCalc = recentExpensesCalc.reduce((sum, t) => sum + Number(t.amount), 0);
               const dailyAverageSpendCalc = totalRecentSpentCalc / 7;
-              let brokeDateText = "Infinite Runway ";
-              if (netBalance <= 0) {
-                brokeDateText = "You are already broke ";
-              } else if (dailyAverageSpendCalc > 0) {
-                const daysRemaining = Math.floor(netBalance / dailyAverageSpendCalc);
-                const targetDate = new Date();
-                targetDate.setDate(targetDate.getDate() + daysRemaining);
-                if (daysRemaining === 0) brokeDateText = "Today (Check your pockets!) ";
-                else if (daysRemaining === 1) brokeDateText = "Tomorrow ";
-                else brokeDateText = targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
-              }
+              const daysRemaining = dailyAverageSpendCalc > 0 ? Math.floor(netBalance / dailyAverageSpendCalc) : null;
+              const brokeDateText = getBrokeDateText(daysRemaining, netBalance);
 
               // 2. Dynamic Financial Vibe Check Badge
-              let vibeTitle = "Pure Hermit Mode ";
-              let vibeDesc = "No expenses logged yet. Are you even alive?";
-              if (burnPercentage > 0 && burnPercentage < 25) {
-                vibeTitle = "Kuripot Master ";
-                vibeDesc = "Solid discipline. Your wallet is safe from impulse checkouts.";
-              } else if (burnPercentage >= 25 && burnPercentage < 60) {
-                vibeTitle = "Balanced Lifestyle ";
-                vibeDesc = "Surviving beautifully. Clean balance between wants and needs.";
-              } else if (burnPercentage >= 60 && burnPercentage < 85) {
-                vibeTitle = "Petsa de Peligro Approaching ";
-                vibeDesc = "The velocity of your spending is getting sketchy. Slow down!";
-              } else if (burnPercentage >= 85) {
-                vibeTitle = "Walang-Wala Mode ";
-                vibeDesc = "Your budget is in critical condition. Instant noodles era has officially arrived.";
-              }
+              const { title: vibeTitle, desc: vibeDesc } = getVibeStrings(burnPercentage);
 
               const tabVariants: Variants = {
                 initial: (dir: number) => ({ opacity: 0, x: dir > 0 ? 20 : -20 }),
@@ -1041,7 +1033,7 @@ export default function Home() {
 
                   {/* Preference Card */}
                   <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm overflow-hidden">
-                    <div className="px-5 py-4 flex items-center justify-between">
+                    <div className="px-5 py-4 flex items-center justify-between border-b border-gray-50">
                       <div>
                         <p className="text-sm font-medium text-[#1d1d1f]">Allowance Cycle</p>
                         <p className="text-xs text-[#86868b] mt-0.5">Controls how your metrics reset</p>
@@ -1055,6 +1047,27 @@ export default function Home() {
                         <option value="Semi-Monthly">Semi-Monthly</option>
                         <option value="Monthly">Monthly</option>
                       </select>
+                    </div>
+
+                    <div className="px-5 py-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-[#1d1d1f]">Personality Tone</p>
+                        <p className="text-xs text-[#86868b] mt-0.5">Coach (Encouraging) vs Roast (Insulting)</p>
+                      </div>
+                      <div className="flex bg-[#f5f5f7] p-1 rounded-lg border border-[#d2d2d7]">
+                        <button
+                          onClick={() => handleToneChange('Coach')}
+                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${toneMode === 'Coach' ? 'bg-white shadow-sm text-[#1d1d1f]' : 'text-[#86868b] hover:text-[#1d1d1f]'}`}
+                        >
+                          Coach
+                        </button>
+                        <button
+                          onClick={() => handleToneChange('Roast')}
+                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${toneMode === 'Roast' ? 'bg-white shadow-sm text-[#1d1d1f]' : 'text-[#86868b] hover:text-[#1d1d1f]'}`}
+                        >
+                          Roast
+                        </button>
+                      </div>
                     </div>
                   </div>
 
