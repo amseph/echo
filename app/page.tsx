@@ -226,11 +226,14 @@ export default function Home() {
         }
       }
 
+      const { data: { user } } = await supabase.auth.getUser();
+
       const { error } = await supabase.from('transactions').insert([
         {
+          user_id: user?.id,
           transaction_date: formData.transaction_date,
           transaction_type: transactionType,
-          amount: parseFloat(amount),
+          amount: Number(amount),
           expense_category: categoryToSend,
           allowance_cycle: formData.allowance_cycle,
         },
