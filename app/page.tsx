@@ -994,7 +994,7 @@ export default function Home() {
                     </div>
 
                     {/* Broke Clock Card */}
-                    <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm p-5 space-y-2">
+                    <div className="bg-[#f5f5f7] dark:bg-neutral-900 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm p-5 space-y-2">
                       <p className="text-xs font-medium uppercase tracking-wider text-[#86868b] dark:text-neutral-400 mb-1">Predicted Broke Date</p>
                       <p className={`text-2xl font-bold tracking-tight ${netBalance < totalAllowance * 0.05 || (brokeDateText.includes('Today') || brokeDateText.includes('Tomorrow')) ? 'text-red-500' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>{brokeDateText}</p>
                       <p className="text-xs text-[#86868b] dark:text-neutral-400 mt-1">Based on your spending speed over the past 7 days.</p>
