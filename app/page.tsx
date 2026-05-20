@@ -22,6 +22,15 @@ const getAllowanceCycle = (dateString: string): string => {
   return `Week ${weekNum} - ${month}`;
 };
 
+const ECHO_FAQS = [
+  { question: "What is the \"Predicted Broke Date\" or \"Runway\"?", answer: "It calculates exactly how many days your remaining allowance will last based on your real spending velocity over the past 7 days. If you haven't spent anything, it defaults to an \"Infinite Runway.\"" },
+  { question: "What does \"Pure Hermit Mode\" mean?", answer: "This is a special status triggered automatically when you haven't logged a single expense for the current cycle. It means your budget is 100% intact!" },
+  { question: "Why did the Receipt Scanner get the wrong amount?", answer: "Dot-matrix or blurry receipts can sometimes cause the AI text reader to misalign lines. If it misreads a digit, don't worry—the scanner only pre-fills the box. You can manually tap the input field to correct the amount before hitting record." },
+  { question: "Can I delete an incorrect transaction?", answer: "Yes. If you make a typo or accidentally record a scan, scroll down to your Transaction History, find the item, and tap the trash icon to wipe it from your ledger instantly." },
+  { question: "How do I change my tracking period?", answer: "In the Settings tab, look for the Allowance Cycle dropdown. You can switch between a Weekly or Monthly cadence to match how you actually receive your money." },
+  { question: "How do I start a completely fresh cycle?", answer: "If you want to clear your testing data or start over, go to Settings and use the Reset Ledger Data button. This permanently wipes your history so you can begin fresh." }
+];
+
 export default function Home() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -43,6 +52,7 @@ export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'error' | 'success' | 'info' } | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   const showToast = (text: string, type: 'error' | 'success' | 'info' = 'error') => {
     setToastMessage({ text, type });
@@ -1084,6 +1094,49 @@ export default function Home() {
                           Reset
                         </button>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* FAQ Accordion Section */}
+                  <div className="pt-2">
+                    <h3 className="text-[13px] font-semibold text-[#86868b] uppercase tracking-wider mb-3 px-1">The Essential ECHO FAQs</h3>
+                    <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm overflow-hidden divide-y divide-[#f5f5f7]">
+                      {ECHO_FAQS.map((faq, idx) => (
+                        <div key={idx} className="flex flex-col">
+                          <button
+                            onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
+                            className="flex items-center justify-between px-5 py-4 text-left hover:bg-[#fcfcfd] transition-colors focus:outline-none"
+                          >
+                            <span className="text-sm font-semibold text-[#1d1d1f] pr-4">{faq.question}</span>
+                            <motion.svg
+                              animate={{ rotate: expandedFaq === idx ? 180 : 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="w-4 h-4 text-[#86868b] flex-shrink-0"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                            </motion.svg>
+                          </button>
+                          <AnimatePresence>
+                            {expandedFaq === idx && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.2, ease: "easeInOut" }}
+                                className="overflow-hidden"
+                              >
+                                <div className="px-5 pb-4 pt-1">
+                                  <p className="text-[13px] leading-relaxed text-[#86868b]">{faq.answer}</p>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </motion.div>
