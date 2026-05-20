@@ -41,6 +41,14 @@ export default function Home() {
   };
 
   const [isMounted, setIsMounted] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{ text: string; type: 'error' | 'success' | 'info' } | null>(null);
+
+  const showToast = (text: string, type: 'error' | 'success' | 'info' = 'error') => {
+    setToastMessage({ text, type });
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4000);
+  };
   const [message, setMessage] = useState({ type: '', text: '' });
   const [customCategory, setCustomCategory] = useState('');
   const [cyclePreference, setCyclePreference] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('echo_cycle') || 'Monthly' : 'Monthly');
@@ -73,7 +81,7 @@ export default function Home() {
         setFormData(prev => ({ ...prev, amount: totalAmount!.toFixed(2) }));
         setMessage({ type: 'success', text: `Receipt scanned: ₱${totalAmount.toFixed(2)} detected.` });
       } else {
-        alert('Could not read receipt clearly. Please upload a clearer image.');
+        showToast('Could not read receipt clearly. Please upload a clearer image.', 'error');
       }
     } catch (err) {
       console.error('OCR Error:', err);
@@ -107,7 +115,7 @@ export default function Home() {
         setTransactions([]);
         handleTabChange('home');
       } else {
-        alert('Error resetting data: ' + error.message);
+        showToast('Error resetting data: ' + error.message, 'error');
       }
     }
     setLoading(false);
@@ -263,13 +271,13 @@ export default function Home() {
 
       if (transactionType === 'debt_payment') {
         if (parseFloat(amount) > totalDebt) {
-          alert(`Validation Error: You cannot pay back more than your current total debt of ₱${totalDebt.toFixed(2)}.`);
+          showToast(`Validation Error: You cannot pay back more than your current total debt of ₱${totalDebt.toFixed(2)}.`, 'error');
           setLoading(false);
           return; // Kill execution early
         }
 
         if (parseFloat(amount) > netBalance) {
-          alert(`Validation Error: Insufficient funds. Your current net balance is ₱${netBalance.toFixed(2)}, you cannot afford this payment.`);
+          showToast(`Validation Error: Insufficient funds. Your current net balance is ₱${netBalance.toFixed(2)}, you cannot afford this payment.`, 'error');
           setLoading(false);
           return; // Kill execution early
         }
@@ -368,6 +376,29 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f7] px-4 py-8 font-sans antialiased text-[#1d1d1f]">
+      
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+            className={`fixed top-6 left-4 right-4 z-50 flex items-center gap-3 rounded-2xl px-5 py-4 shadow-xl backdrop-blur-md border mx-auto max-w-sm ${
+              toastMessage.type === 'error' ? 'bg-red-50/90 border-red-200 text-red-700' : 'bg-[#1d1d1f]/90 border-[#3d3d42] text-white'
+            }`}
+          >
+            <div className="flex-1">
+              <span className="text-sm font-semibold tracking-tight">{toastMessage.text}</span>
+            </div>
+            <button onClick={() => setToastMessage(null)} className="opacity-60 hover:opacity-100 transition-opacity">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Case 1: Database is still pulling rows */}
       {loading ? (
