@@ -105,6 +105,18 @@ export default function Home() {
     }
   };
 
+  const handleDeleteTransaction = async (id: number) => {
+    if (!window.confirm('Are you sure you want to delete this transaction?')) return;
+    try {
+      const { error } = await supabase.from('transactions').delete().eq('id', id);
+      if (error) throw error;
+      setTransactions(prev => prev.filter(t => t.id !== id));
+      showToast('Transaction deleted successfully.', 'success');
+    } catch (error: any) {
+      showToast('Error deleting transaction: ' + error.message, 'error');
+    }
+  };
+
   const handleResetLedger = async () => {
     if (!window.confirm('Are you sure you want to completely wipe your ledger? This cannot be undone.')) return;
     setLoading(true);
@@ -737,24 +749,37 @@ export default function Home() {
                         <p className="text-xs text-gray-400 text-center py-10">No transactions yet.</p>
                       ) : (
                         <motion.div className="space-y-1" variants={listContainer} initial="hidden" animate="visible">
-                          {transactions.map((tx) => {
-                            const isInflow = tx.transaction_type === 'allowance' || tx.transaction_type === 'shortage_request' || tx.transaction_type === 'debt';
-                            const isDebtPay = tx.transaction_type === 'debt_payment';
-                            return (
-                              <motion.div key={tx.id} variants={listItem} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
-                                <div className="min-w-0 flex-1">
-                                  <p className="font-medium text-sm text-[#1d1d1f] truncate">{isDebtPay ? 'Paid Back Loan (Soli)' : tx.expense_category}</p>
-                                  <p className="text-[10px] text-[#86868b]">{tx.transaction_date} · {tx.allowance_cycle}</p>
-                                </div>
-                                <div className="text-right ml-3 flex-shrink-0">
-                                  <p className={`font-bold text-sm ${isInflow ? 'text-green-600' : 'text-[#1d1d1f]'}`}>
-                                    {isDebtPay ? `−₱${parseFloat(tx.amount).toFixed(2)}` : `${isInflow ? '+' : '−'}₱${parseFloat(tx.amount).toFixed(2)}`}
-                                  </p>
-                                  <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b]">{isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}</p>
-                                </div>
-                              </motion.div>
-                            );
-                          })}
+                          <AnimatePresence>
+                            {transactions.map((tx) => {
+                              const isInflow = tx.transaction_type === 'allowance' || tx.transaction_type === 'shortage_request' || tx.transaction_type === 'debt';
+                              const isDebtPay = tx.transaction_type === 'debt_payment';
+                              return (
+                                <motion.div key={tx.id} variants={listItem} exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0 group">
+                                  <div className="min-w-0 flex-1">
+                                    <p className="font-medium text-sm text-[#1d1d1f] truncate">{isDebtPay ? 'Paid Back Loan (Soli)' : tx.expense_category}</p>
+                                    <p className="text-[10px] text-[#86868b]">{tx.transaction_date} · {tx.allowance_cycle}</p>
+                                  </div>
+                                  <div className="flex items-center gap-3 ml-3 flex-shrink-0">
+                                    <div className="text-right">
+                                      <p className={`font-bold text-sm ${isInflow ? 'text-green-600' : 'text-[#1d1d1f]'}`}>
+                                        {isDebtPay ? `−₱${parseFloat(tx.amount).toFixed(2)}` : `${isInflow ? '+' : '−'}₱${parseFloat(tx.amount).toFixed(2)}`}
+                                      </p>
+                                      <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b]">{isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}</p>
+                                    </div>
+                                    <button 
+                                      onClick={() => handleDeleteTransaction(tx.id)}
+                                      className="p-1.5 text-[#d2d2d7] hover:text-red-500 hover:bg-red-50 active:scale-95 rounded-lg transition-all"
+                                      title="Delete transaction"
+                                    >
+                                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </motion.div>
+                              );
+                            })}
+                          </AnimatePresence>
                         </motion.div>
                       )}
                     </div>
