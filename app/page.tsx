@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 const getAllowanceCycle = (dateString: string): string => {
   if (!dateString) return '';
@@ -20,6 +21,7 @@ const getAllowanceCycle = (dateString: string): string => {
 };
 
 export default function Home() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [isMounted, setIsMounted] = useState(false);
@@ -36,7 +38,7 @@ export default function Home() {
     allowance_cycle: getAllowanceCycle(initialDate), // Auto-calculate on load
   });
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = async (userId?: string) => {
     const { data, error } = await supabase
       .from('transactions')
       .select('*')
@@ -49,7 +51,20 @@ export default function Home() {
 
   useEffect(() => {
     setIsMounted(true);
-    fetchTransactions();
+    
+    const checkUserSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        // Direct unauthorized visitors out to the login page immediately
+        router.push('/login');
+      } else {
+        // Load current user's isolated transaction data from Supabase rows
+        fetchTransactions(session.user.id);
+      }
+    };
+
+    checkUserSession();
   }, []);
 
   // --- DATA PROCESSING FOR ANALYTICS ---
