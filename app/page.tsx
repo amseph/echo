@@ -121,7 +121,7 @@ export default function Home() {
         router.push('/login');
       } else {
         // Load current user's isolated transaction data from Supabase rows
-        fetchTransactions(session.user.id);
+        fetchTransactions();
       }
     };
 
