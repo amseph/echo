@@ -1,65 +1,379 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+const getAllowanceCycle = (dateString: string): string => {
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const month = monthNames[date.getMonth()];
+
+  // Calculate the week number of the month
+  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  const dayOfWeek = firstDayOfMonth.getDay();
+  const adjustedDate = date.getDate() + dayOfWeek - 1;
+  const weekNum = Math.ceil(adjustedDate / 7);
+
+  return `Week ${weekNum} - ${month}`;
+};
 
 export default function Home() {
+  const [loading, setLoading] = useState(false);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const [customCategory, setCustomCategory] = useState('');
+
+  const initialDate = new Date().toISOString().split('T')[0];
+
+  const [formData, setFormData] = useState({
+    transaction_date: initialDate,
+    transaction_type: 'expense',
+    amount: '',
+    expense_category: 'Food',
+    allowance_cycle: getAllowanceCycle(initialDate), // Auto-calculate on load
+  });
+
+  const fetchTransactions = async () => {
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setTransactions(data);
+    }
+  };
+
+  useEffect(() => {
+    setIsMounted(true);
+    fetchTransactions();
+  }, []);
+
+  // --- DATA PROCESSING FOR ANALYTICS ---
+  const currentMonthTransactions = transactions.filter((t) =>
+    t.transaction_date.startsWith(new Date().toISOString().slice(0, 7))
+  );
+
+  const totalAllowance = currentMonthTransactions
+    .filter((t) => t.transaction_type === 'allowance')
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const totalExpenses = currentMonthTransactions
+    .filter((t) => t.transaction_type === 'expense')
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const totalShortages = currentMonthTransactions
+    .filter((t) => t.transaction_type === 'shortage_request')
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const totalDebt = transactions
+    .filter((t) => t.transaction_type === 'debt')
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const netBalance = totalAllowance + totalShortages + totalDebt - totalExpenses;
+
+  // Automatically switch categories based on Type to ensure clean data entries
+  const handleTypeChange = (type: string) => {
+    let defaultCategory = 'Food';
+    if (type === 'allowance') defaultCategory = 'Regular Weekly Allowance';
+    if (type === 'shortage_request') defaultCategory = 'Emergency / Shortage';
+    if (type === 'debt') defaultCategory = '';
+
+    setFormData({
+      ...formData,
+      transaction_type: type,
+      expense_category: defaultCategory,
+    });
+    setCustomCategory('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.transaction_type === 'expense' && parseFloat(formData.amount) > netBalance) {
+      setMessage({ type: 'error', text: 'Kulang ang iyong pondo! I-log muna ang inutang (Debt) o hininging pondo bago gastusin.' });
+      return;
+    }
+
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const categoryToSend = formData.expense_category === 'Other' ? customCategory : formData.expense_category;
+
+      const { error } = await supabase.from('transactions').insert([
+        {
+          transaction_date: formData.transaction_date,
+          transaction_type: formData.transaction_type,
+          amount: parseFloat(formData.amount),
+          expense_category: categoryToSend,
+          allowance_cycle: formData.allowance_cycle,
+        },
+      ]);
+
+      if (error) throw error;
+
+      setMessage({ type: 'success', text: 'Transaction recorded!' });
+
+      // Reset amount and customCategory but preserve type, category, and cycle for rapid entry
+      setFormData(prev => ({ ...prev, amount: '' }));
+      setCustomCategory('');
+      fetchTransactions();
+    } catch (error: any) {
+      setMessage({ type: 'error', text: error.message || 'Something went wrong.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const categoryMap = transactions
+    .filter((t) => t.transaction_type === 'expense')
+    .reduce((acc: any, t) => {
+      acc[t.expense_category] = (acc[t.expense_category] || 0) + Number(t.amount);
+      return acc;
+    }, {});
+
+  const chartData = Object.keys(categoryMap).map((cat) => ({
+    name: cat,
+    value: categoryMap[cat],
+  }));
+
+  const COLORS = ['#000000', '#4B5563', '#9CA3AF', '#D1D5DB', '#E5E7EB'];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="flex min-h-screen flex-col items-center justify-start bg-gray-50 p-4 md:p-12 space-y-6">
+
+      {/* HEADER */}
+      <div className="w-full max-w-4xl text-left pl-2">
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">ECHO</h1>
+        <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mt-1">Expense & Cashflow Habit Observer</p>
+      </div>
+
+      {/* METRIC CARDS OVERVIEW */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 w-full max-w-4xl">
+        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Allowance</p>
+          <p className="text-2xl font-bold text-green-600 mt-1">₱{totalAllowance.toFixed(2)}</p>
+        </div>
+        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Expenses</p>
+          <p className="text-2xl font-bold text-gray-900 mt-1">₱{totalExpenses.toFixed(2)}</p>
+        </div>
+        <div className="bg-amber-50 p-5 rounded-2xl border border-amber-200 shadow-sm">
+          <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider">Total Debt</p>
+          <p className="text-2xl font-bold text-amber-700 mt-1">₱{totalDebt.toFixed(2)}</p>
+        </div>
+        <div className={`p-5 rounded-2xl border shadow-sm ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Net Balance</p>
+          <p className={`text-2xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : 'text-blue-600'}`}>
+            ₱{netBalance.toFixed(2)}
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      {/* MAIN CONTENT SPLIT */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full max-w-4xl items-start">
+
+        {/* LEFT COLUMN: FORM & VISUALIZATION */}
+        <div className="lg:col-span-7 space-y-6">
+          {/* Input Form Card */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4">Log Transaction</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  Date <span className="text-gray-400 font-normal ml-1.5">• {formData.allowance_cycle}</span>
+                </label>
+                <input
+                  type="date"
+                  required
+                  className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                  value={formData.transaction_date}
+                  onChange={(e) => {
+                    const newDate = e.target.value;
+                    setFormData({
+                      ...formData,
+                      transaction_date: newDate,
+                      allowance_cycle: getAllowanceCycle(newDate) // Dynamic calculation!
+                    });
+                  }}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Type</label>
+                  <select
+                    className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm bg-white"
+                    value={formData.transaction_type}
+                    onChange={(e) => handleTypeChange(e.target.value)}
+                  >
+                    <option value="expense">Expense</option>
+                    <option value="allowance">Allowance</option>
+                    <option value="shortage_request">Shortage</option>
+                    <option value="debt">Debt</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Amount</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    placeholder="0.00"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                    value={formData.amount}
+                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div>
+                {/* Clean Dropdown Selector for Categories */}
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  {formData.transaction_type === 'debt' ? 'Lender / Source (Kanino / Saan)' : 'Category'}
+                </label>
+                {formData.transaction_type === 'debt' ? (
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g., Juan, Aling Nena, Canteen"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                    value={formData.expense_category}
+                    onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })}
+                  />
+                ) : (
+                  <select
+                    className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm bg-white"
+                    value={formData.expense_category}
+                    onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })}
+                  >
+                    {formData.transaction_type === 'allowance' ? (
+                      <>
+                        <option value="Regular Weekly Allowance">Regular Weekly Allowance</option>
+                        <option value="Parents / Family">Parents / Family</option>
+                        <option value="Scholarship / Stipend">Scholarship / Stipend</option>
+                        <option value="Other Income">Other Income</option>
+                      </>
+                    ) : formData.transaction_type === 'shortage_request' ? (
+                      <>
+                        <option value="Emergency / Shortage">Emergency / Shortage</option>
+                        <option value="Food Shortage">Food Shortage</option>
+                        <option value="Transport Shortage">Transport Shortage</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="Food">Food</option>
+                        <option value="Transportation">Transportation</option>
+                        <option value="Education / Supplies">Education / Supplies</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Utilities / Bills">Utilities / Bills</option>
+                        <option value="Other">Other</option>
+                      </>
+                    )}
+                  </select>
+                )}
+
+                {formData.expense_category === 'Other' && (
+                  <input
+                    type="text"
+                    required
+                    placeholder="Specify category"
+                    maxLength={25}
+                    className="w-full mt-2 px-4 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                    value={customCategory}
+                    onChange={(e) => setCustomCategory(e.target.value)}
+                  />
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full mt-2 bg-black text-white py-2.5 rounded-lg font-medium text-sm hover:bg-gray-800 transition-colors disabled:bg-gray-400"
+              >
+                {loading ? 'Saving...' : 'Record Transaction'}
+              </button>
+            </form>
+
+            {message.text && (
+              <div className={`mt-4 p-3 rounded-lg text-sm text-center font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                {message.text}
+              </div>
+            )}
+          </div>
+
+          {/* Chart Analytics Card */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Expense Distribution</h2>
+            {isMounted && chartData.length > 0 ? (
+              <div className="h-48 w-full flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={75}
+                      paddingAngle={4}
+                      dataKey="value"
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => `₱${Number(value).toFixed(2)}`} />
+                  </PieChart>
+                </ResponsiveContainer>
+
+                <div className="text-xs space-y-1.5 ml-4">
+                  {chartData.map((entry, index) => (
+                    <div key={entry.name} className="flex items-center space-x-2">
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                      <span className="text-gray-600 font-medium">{entry.name}:</span>
+                      <span className="text-gray-900 font-bold">₱{entry.value.toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-gray-400 text-center py-12">Log expenses to generate category metrics.</p>
+            )}
+          </div>
         </div>
-      </main>
-    </div>
+
+        {/* RIGHT COLUMN: TRANSACTION HISTORY LIST */}
+        <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm h-full max-h-[580px] overflow-y-auto">
+          <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4">Transaction History</h2>
+
+          {transactions.length === 0 ? (
+            <p className="text-xs text-gray-400 text-center py-8">No transactions recorded yet.</p>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {transactions.map((t) => (
+                <div key={t.id} className="flex items-center justify-between py-3 text-sm">
+                  <div className="pr-2 truncate">
+                    <p className="font-semibold text-gray-800 truncate">{t.expense_category}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{t.transaction_date} • {t.allowance_cycle}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <span className={`font-bold ${t.transaction_type === 'allowance' ? 'text-green-600' : t.transaction_type === 'shortage_request' ? 'text-amber-600' : 'text-gray-900'}`}>
+                      {t.transaction_type === 'expense' ? '-' : '+'} ₱{parseFloat(t.amount).toFixed(2)}
+                    </span>
+                    <p className="text-[9px] text-gray-400 uppercase tracking-wider font-semibold mt-0.5">{t.transaction_type.replace('_', ' ')}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+      </div>
+    </main>
   );
 }
