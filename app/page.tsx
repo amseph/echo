@@ -664,7 +664,10 @@ export default function Home() {
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Net Balance</p>
-                      <p className={`text-xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : 'text-blue-600'}`}>₱{netBalance.toFixed(2)}</p>
+                      <p 
+                        className={`text-xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : ''}`}
+                        style={netBalance > 0 ? { color: color1 } : {}}
+                      >₱{netBalance.toFixed(2)}</p>
                       <p className={`text-[10px] mt-1 font-medium ${netBalance <= 0 ? 'text-red-400' : 'text-blue-400'}`}>{netBalance <= 0 ? '● Deficit' : '● Available'}</p>
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${daysRemaining !== null && daysRemaining <= 3 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
@@ -720,7 +723,8 @@ export default function Home() {
                                 type="button"
                                 disabled={scanning}
                                 onClick={() => receiptInputRef.current?.click()}
-                                className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg bg-[#1d2d2a]/10 text-[#1d2d2a] hover:bg-[#1d2d2a]/20 active:scale-90 transition-all disabled:opacity-40"
+                                style={{ background: `linear-gradient(135deg, ${color1}, ${color2})` }}
+                                className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-white hover:opacity-90 active:scale-90 transition-all disabled:opacity-40 shadow-sm"
                                 title="Scan receipt"
                               >
                                 {scanning ? (
@@ -991,7 +995,10 @@ export default function Home() {
                       </div>
                       <div className="flex items-center justify-between pt-2 border-t border-[#f5f5f7]">
                         <p className="text-xs text-[#86868b]">Net Balance</p>
-                        <p className={`text-sm font-bold ${netBalance >= 0 ? 'text-[#1d1d1f]' : 'text-red-500'}`}>
+                        <p 
+                          className={`text-sm font-bold ${netBalance < 0 ? 'text-red-500' : ''}`}
+                          style={netBalance >= 0 ? { color: color1 } : {}}
+                        >
                           {netBalance >= 0 ? '+' : ''}₱{netBalance.toFixed(2)}
                         </p>
                       </div>
