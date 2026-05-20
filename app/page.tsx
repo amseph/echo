@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
@@ -398,11 +398,11 @@ export default function Home() {
             else if (homeBurnPct >= 85) { homeVibeTitle = 'Walang-Wala Mode '; homeVibeDesc = 'Budget critical. Instant noodles era has arrived.'; }
             const isCritical = netBalance <= 0 || homeBrokeText === 'Today ' || homeBrokeText === 'Tomorrow ';
 
-            const listContainer = {
+            const listContainer: Variants = {
               hidden: {},
               visible: { transition: { staggerChildren: 0.1 } },
             };
-            const listItem = {
+            const listItem: Variants = {
               hidden: { opacity: 0, x: -20 },
               visible: { opacity: 1, x: 0, transition: { duration: 0.22, ease: 'easeOut' } },
             };
