@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
@@ -374,6 +375,7 @@ export default function Home() {
       ) : (
         /* Case 3: Redesigned dashboard */
         <>
+          <AnimatePresence mode="wait">
           {activeTab === 'home' && (() => {
             const homeBurnPct = totalAllowance > 0 ? Math.min(Math.round((totalExpenses / totalAllowance) * 100), 100) : 0;
             const homeDaysAgo = new Date(); homeDaysAgo.setDate(homeDaysAgo.getDate() - 7);
@@ -396,7 +398,7 @@ export default function Home() {
             else if (homeBurnPct >= 85) { homeVibeTitle = 'Walang-Wala Mode '; homeVibeDesc = 'Budget critical. Instant noodles era has arrived.'; }
             const isCritical = netBalance <= 0 || homeBrokeText === 'Today ' || homeBrokeText === 'Tomorrow ';
             return (
-              <div className="mx-auto max-w-5xl space-y-5 pb-24">
+              <motion.div key="home" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="mx-auto max-w-5xl space-y-5 pb-24">
                 {/* HEADER */}
                 <div className="bg-[#1d2d2a] rounded-3xl px-6 py-5 flex items-center justify-between">
                   <div>
@@ -423,33 +425,33 @@ export default function Home() {
 
                 {/* METRIC CARDS */}
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Allowance</p>
                     <p className="text-xl font-bold text-[#1d2d2a] mt-1">₱{totalAllowance.toFixed(2)}</p>
                     <p className="text-[10px] text-green-500 mt-1 font-medium">● Inflow this cycle</p>
-                  </div>
-                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Expenses</p>
                     <p className="text-xl font-bold text-[#1d1d1f] mt-1">₱{totalExpenses.toFixed(2)}</p>
                     <p className="text-[10px] text-gray-400 mt-1 font-medium">{homeBurnPct}% of budget</p>
-                  </div>
-                  <div className={`rounded-2xl border shadow-sm p-4 ${totalDebt > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-gray-100'}`}>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${totalDebt > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-gray-100'}`}>
                     <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Debt</p>
                     <p className="text-xl font-bold text-amber-700 mt-1">₱{totalDebt.toFixed(2)}</p>
                     <p className="text-[10px] text-amber-500 mt-1 font-medium">{totalDebt > 0 ? '⚠ Outstanding' : '● Clear'}</p>
-                  </div>
-                  <div className={`rounded-2xl border shadow-sm p-4 ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Net Balance</p>
                     <p className={`text-xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : 'text-blue-600'}`}>₱{netBalance.toFixed(2)}</p>
                     <p className={`text-[10px] mt-1 font-medium ${netBalance <= 0 ? 'text-red-400' : 'text-blue-400'}`}>{netBalance <= 0 ? '● Deficit' : '● Available'}</p>
-                  </div>
-                  <div className={`rounded-2xl border shadow-sm p-4 ${daysRemaining !== null && daysRemaining <= 3 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${daysRemaining !== null && daysRemaining <= 3 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Runway</p>
                     <p className={`text-xl font-bold mt-1 ${daysRemaining === null || netBalance <= 0 ? 'text-gray-300' : daysRemaining <= 3 ? 'text-red-500' : 'text-[#1d1d1f]'}`}>
                       {daysRemaining === null || netBalance <= 0 ? '—' : `${daysRemaining}d`}
                     </p>
                     <p className="text-[10px] text-gray-400 mt-1 font-medium">₱{dailyAverageSpend.toFixed(0)}/day avg</p>
-                  </div>
+                  </motion.div>
                 </div>
 
                 {/* PREDICTIVE INSIGHT STRIP */}
@@ -470,7 +472,7 @@ export default function Home() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
                   {/* LEFT: FORM + CHART */}
                   <div className="lg:col-span-7 space-y-5">
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25, ease: 'easeOut' }} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                       <div className="flex items-center justify-between mb-4">
                         <h2 className="text-sm font-bold text-[#1d1d1f] tracking-tight">Log Transaction</h2>
                         <span className="text-[10px] text-[#86868b] bg-[#f5f5f7] rounded-lg px-2 py-1 font-medium">{formData.allowance_cycle}</span>
@@ -534,7 +536,7 @@ export default function Home() {
                           {message.text}
                         </div>
                       )}
-                    </div>
+                    </motion.div>
                     {/* CHART */}
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                       <h2 className="text-sm font-bold text-[#1d1d1f] tracking-tight mb-3">Expense Distribution</h2>
@@ -596,7 +598,7 @@ export default function Home() {
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })()}
 
@@ -644,6 +646,7 @@ export default function Home() {
             }
 
             return (
+              <motion.div key="analytics" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
               <div className="max-w-md mx-auto space-y-6 pt-4 pb-24">
 
                 {/* Header */}
@@ -762,11 +765,12 @@ export default function Home() {
                   )}
                 </div>
               </div>
+              </motion.div>
             );
           })()}
 
           {activeTab === 'settings' && (
-            <div className="max-w-md mx-auto space-y-6 pt-4 pb-24">
+            <motion.div key="settings" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="max-w-md mx-auto space-y-6 pt-4 pb-24">
 
               {/* Title Block */}
               <div className="flex items-center justify-between">
@@ -837,8 +841,9 @@ export default function Home() {
                 </div>
               </div>
 
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
 
           {/* MOBILE BOTTOM NAVIGATION BAR */}
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-t border-[#e8e8ed] py-2 px-6 flex justify-around md:hidden">
