@@ -56,30 +56,17 @@ export default function Home() {
       const { data: { text } } = await Tesseract.recognize(file, 'eng');
       const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
-      // Strategy 1: Find a line with target keywords and extract its amount
+      // Filter out lines containing cash, change, tendered, received, or payment
+      const ignoreRegex = /\b(CASH|CHANGE|TENDERED|RECEIVED|PAYMENT)\b/i;
+      const cleanLines = lines.filter(line => !ignoreRegex.test(line));
+      const cleanText = cleanLines.join('\n');
+
+      // Extract the highest remaining numeric value from the clean text
       let totalAmount: number | null = null;
-      const targetRegex = /\b(TOTAL|DUE|AMOUNT|GRAND\sTOTAL|NET|PAYABLE|TTL|BALANCE)\b/i;
-      const excludeRegex = /\b(SUBTOTAL|SUB\sTOTAL|ITEM)\b/i;
-
-      for (const line of lines) {
-        if (targetRegex.test(line) && !excludeRegex.test(line)) {
-          const amounts = line.match(/[\d,]+\.\d{2}/g);
-          if (amounts) {
-            // Take the last decimal found on the line (typically the aligned total) instead of the highest number
-            const parsed = amounts.map(a => parseFloat(a.replace(/,/g, '')));
-            totalAmount = parsed[parsed.length - 1];
-            break; // Stop at the first line that matches the criteria
-          }
-        }
-      }
-
-      // Strategy 2: Fallback to the highest currency figure in the entire text
-      if (totalAmount === null) {
-        const allAmounts = text.match(/[\d,]+\.\d{2}/g);
-        if (allAmounts && allAmounts.length > 0) {
-          const parsed = allAmounts.map(a => parseFloat(a.replace(/,/g, '')));
-          totalAmount = Math.max(...parsed);
-        }
+      const allAmounts = cleanText.match(/[\d,]+\.\d{2}/g);
+      if (allAmounts && allAmounts.length > 0) {
+        const parsed = allAmounts.map(a => parseFloat(a.replace(/,/g, '')));
+        totalAmount = Math.max(...parsed);
       }
 
       if (totalAmount !== null && totalAmount > 0) {
