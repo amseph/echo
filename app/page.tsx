@@ -42,6 +42,43 @@ export default function Home() {
     }
   };
 
+  const handleInitializeCycle = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!initialAllowance || parseFloat(initialAllowance) <= 0) return;
+
+    setLoading(true);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const todayDate = new Date().toISOString().split('T')[0];
+
+      const { error } = await supabase
+        .from('transactions')
+        .insert([
+          {
+            user_id: user.id,
+            transaction_type: 'allowance',
+            amount: parseFloat(initialAllowance),
+            expense_category: 'Parents / Family',
+            transaction_date: todayDate,
+            allowance_cycle: getAllowanceCycle(todayDate),
+          }
+        ]);
+
+      if (!error) {
+        setInitialAllowance('');
+        await fetchTransactions();
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  };
+
   const initialDate = new Date().toISOString().split('T')[0];
 
   const [formData, setFormData] = useState({
@@ -52,14 +89,24 @@ export default function Home() {
     allowance_cycle: getAllowanceCycle(initialDate), // Auto-calculate on load
   });
 
-  const fetchTransactions = async (userId?: string) => {
-    const { data, error } = await supabase
-      .from('transactions')
-      .select('*')
-      .order('created_at', { ascending: false });
+  const fetchTransactions = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
 
-    if (!error && data) {
-      setTransactions(data);
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setTransactions(data);
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
