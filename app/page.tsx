@@ -64,8 +64,7 @@ export default function Home() {
   const [customCategory, setCustomCategory] = useState('');
   const [cyclePreference, setCyclePreference] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('echo_cycle') || 'Monthly' : 'Monthly');
   const [toneMode, setToneMode] = useState<'Coach' | 'Roast'>(() => typeof window !== 'undefined' ? (localStorage.getItem('echo_tone') as 'Coach' | 'Roast') || 'Roast' : 'Roast');
-  const [color1, setColor1] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('echo_color1') || '#1d2d2a' : '#1d2d2a');
-  const [color2, setColor2] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('echo_color2') || '#1d2d2a' : '#1d2d2a');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => typeof window !== 'undefined' ? (localStorage.getItem('echo_theme') as 'light' | 'dark') || 'light' : 'light');
   const [userEmail, setUserEmail] = useState('');
 
   const handleToneChange = (value: string) => {
@@ -73,8 +72,7 @@ export default function Home() {
     localStorage.setItem('echo_tone', value);
   };
 
-  const handleColor1Change = (val: string) => { setColor1(val); localStorage.setItem('echo_color1', val); };
-  const handleColor2Change = (val: string) => { setColor2(val); localStorage.setItem('echo_color2', val); };
+  const handleThemeChange = (val: 'light' | 'dark') => { setTheme(val); localStorage.setItem('echo_theme', val); };
 
   const getVibeStrings = (burnPct: number) => {
     if (toneMode === 'Coach') {
@@ -436,7 +434,7 @@ export default function Home() {
   }, [loading, transactions.length, vibeNotifTitle, vibeNotifDesc]);
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] px-4 py-8 font-sans antialiased text-[#1d1d1f]">
+    <div className={`min-h-screen bg-[#f5f5f7] dark:bg-neutral-900 px-4 py-8 font-sans antialiased text-[#1d1d1f] dark:text-neutral-100 ${theme === 'dark' ? 'dark' : ''}`}>
       
       <AnimatePresence>
         {toastMessage && (
@@ -501,7 +499,7 @@ export default function Home() {
 
       {/* Case 1: Database is still pulling rows */}
       {loading ? (
-        <div className="mx-auto max-w-5xl space-y-6 animate-pulse mt-2">
+        <div className="mx-auto max-w-5xl space-y-6 animate-pulse mt-2 dark:opacity-50">
           {/* Header Placeholder */}
           <div className="flex items-start justify-between border-b border-[#e8e8ed] pb-6 mb-8">
             <div className="space-y-2">
@@ -514,7 +512,7 @@ export default function Home() {
           {/* Metric Cards Placeholder */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 w-full max-w-4xl">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-white h-[90px] p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+              <div key={i} className="bg-white dark:bg-neutral-800 h-[90px] p-5 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm flex flex-col justify-between">
                 <div className="h-3 w-16 bg-[#f5f5f7] rounded-md" />
                 <div className="h-5 w-24 bg-[#f5f5f7] rounded-md" />
               </div>
@@ -525,7 +523,7 @@ export default function Home() {
 
         /* Case 2: User is logged in but has a clean slate (Onboarding View) */
         <div className="flex min-h-[70vh] items-center justify-center animate-fadeIn">
-          <div className="w-full max-w-[440px] rounded-3xl border border-[#e8e8ed] bg-white p-8 text-center shadow-sm">
+          <div className="w-full max-w-[440px] rounded-3xl border border-[#e8e8ed] dark:border-neutral-700 bg-white dark:bg-neutral-800 p-8 text-center shadow-sm">
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-600">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
@@ -620,8 +618,7 @@ export default function Home() {
                 <motion.div key="home" custom={direction} variants={tabVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }} className="mx-auto max-w-5xl space-y-5 pb-24">
                   {/* HEADER */}
                   <div 
-                    className="rounded-3xl px-6 py-5 flex items-center justify-between"
-                    style={{ background: `linear-gradient(135deg, ${color1}, ${color2})` }}
+                    className="bg-[#1d2d2a] dark:bg-neutral-800 rounded-3xl px-6 py-5 flex items-center justify-between"
                   >
                     <div>
                       <p className="text-[11px] font-semibold uppercase tracking-widest text-[#b7e887]/70 mb-0.5">ECHO Dashboard</p>
@@ -647,12 +644,12 @@ export default function Home() {
 
                   {/* METRIC CARDS */}
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-4">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Allowance</p>
                       <p className="text-xl font-bold text-[#1d2d2a] mt-1">₱{totalAllowance.toFixed(2)}</p>
                       <p className="text-[10px] text-green-500 mt-1 font-medium">● Inflow this cycle</p>
                     </motion.div>
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-4">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Expenses</p>
                       <p className="text-xl font-bold text-[#1d1d1f] mt-1">₱{totalExpenses.toFixed(2)}</p>
                       <p className="text-[10px] text-gray-400 mt-1 font-medium">{homeBurnPct}% of budget</p>
@@ -664,10 +661,7 @@ export default function Home() {
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Net Balance</p>
-                      <p 
-                        className={`text-xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : ''}`}
-                        style={netBalance > 0 ? { color: color1 } : {}}
-                      >₱{netBalance.toFixed(2)}</p>
+                      <p className={`text-xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : 'text-blue-600 dark:text-blue-400'}`}>₱{netBalance.toFixed(2)}</p>
                       <p className={`text-[10px] mt-1 font-medium ${netBalance <= 0 ? 'text-red-400' : 'text-blue-400'}`}>{netBalance <= 0 ? '● Deficit' : '● Available'}</p>
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${daysRemaining !== null && daysRemaining <= 3 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
@@ -697,7 +691,7 @@ export default function Home() {
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
                     {/* LEFT: FORM + CHART */}
                     <div className="lg:col-span-7 space-y-5">
-                      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25, ease: 'easeOut' }} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25, ease: 'easeOut' }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5">
                         <div className="flex items-center justify-between mb-4">
                           <h2 className="text-sm font-bold text-[#1d1d1f] tracking-tight">Log Transaction</h2>
                           <span className="text-[10px] text-[#86868b] bg-[#f5f5f7] rounded-lg px-2 py-1 font-medium">{formData.allowance_cycle}</span>
@@ -723,8 +717,7 @@ export default function Home() {
                                 type="button"
                                 disabled={scanning}
                                 onClick={() => receiptInputRef.current?.click()}
-                                style={{ background: `linear-gradient(135deg, ${color1}, ${color2})` }}
-                                className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-white hover:opacity-90 active:scale-90 transition-all disabled:opacity-40 shadow-sm"
+                                className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg bg-[#1d2d2a] dark:bg-neutral-600 text-white hover:opacity-90 active:scale-90 transition-all disabled:opacity-40 shadow-sm"
                                 title="Scan receipt"
                               >
                                 {scanning ? (
@@ -782,8 +775,7 @@ export default function Home() {
                               value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} />
                           )}
                           <button type="submit" disabled={loading}
-                            style={{ background: `linear-gradient(135deg, ${color1}, ${color2})` }}
-                            className="w-full text-white py-3 rounded-xl font-semibold text-sm hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-sm border border-black/10">
+                            className="w-full bg-[#1d2d2a] dark:bg-neutral-700 text-white py-3 rounded-xl font-semibold text-sm hover:bg-[#253d38] dark:hover:bg-neutral-600 active:scale-[0.98] transition-all disabled:opacity-50">
                             {loading ? 'Saving...' : 'Record Transaction'}
                           </button>
                         </form>
@@ -794,7 +786,7 @@ export default function Home() {
                         )}
                       </motion.div>
                       {/* CHART */}
-                      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                      <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5">
                         <h2 className="text-sm font-bold text-[#1d1d1f] tracking-tight mb-3">Expense Distribution</h2>
                         {isMounted && chartData.length > 0 ? (
                           <div className="flex items-center gap-4">
@@ -826,8 +818,8 @@ export default function Home() {
                       </div>
                     </div>
                     {/* RIGHT: LEDGER */}
-                    <div className="lg:col-span-5 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 max-h-[640px] overflow-y-auto">
-                      <h2 className="text-sm font-bold text-[#1d1d1f] tracking-tight mb-3 sticky top-0 bg-white pb-2 border-b border-gray-100">Transaction History</h2>
+                    <div className="lg:col-span-5 bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5 max-h-[640px] overflow-y-auto">
+                      <h2 className="text-sm font-bold text-[#1d1d1f] dark:text-white tracking-tight mb-3 sticky top-0 bg-white dark:bg-neutral-800 pb-2 border-b border-gray-100 dark:border-neutral-700">Transaction History</h2>
                       {transactions.length === 0 ? (
                         <p className="text-xs text-gray-400 text-center py-10">No transactions yet.</p>
                       ) : (
@@ -905,7 +897,7 @@ export default function Home() {
                     <h2 className="text-2xl font-semibold text-[#1d1d1f]">Financial Analytics</h2>
 
                     {/* Burn Rate Card */}
-                    <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm p-5 space-y-3">
+                    <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm p-5 space-y-3">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium text-[#1d1d1f]">Budget Utilization</p>
                         <p className={`text-sm font-bold ${burnPercentage >= 70 ? 'text-red-500' : 'text-[#1d1d1f]'}`}>
@@ -927,7 +919,7 @@ export default function Home() {
                     </div>
 
                     {/* Spending Distribution Card */}
-                    <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm p-5 space-y-4">
+                    <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm p-5 space-y-4">
                       <p className="text-sm font-medium text-[#1d1d1f]">Spending Distribution</p>
                       {chartData.length > 0 ? (
                         <>
@@ -981,7 +973,7 @@ export default function Home() {
                     )}
 
                     {/* Net Flow Card */}
-                    <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm p-5 space-y-4">
+                    <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm p-5 space-y-4">
                       <p className="text-sm font-medium text-[#1d1d1f]">Cash Flow Summary</p>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-green-50 rounded-xl p-4 text-center">
@@ -995,17 +987,14 @@ export default function Home() {
                       </div>
                       <div className="flex items-center justify-between pt-2 border-t border-[#f5f5f7]">
                         <p className="text-xs text-[#86868b]">Net Balance</p>
-                        <p 
-                          className={`text-sm font-bold ${netBalance < 0 ? 'text-red-500' : ''}`}
-                          style={netBalance >= 0 ? { color: color1 } : {}}
-                        >
+                        <p className={`text-sm font-bold ${netBalance >= 0 ? 'text-[#1d1d1f] dark:text-white' : 'text-red-500'}`}>
                           {netBalance >= 0 ? '+' : ''}₱{netBalance.toFixed(2)}
                         </p>
                       </div>
                     </div>
 
                     {/* Broke Clock Card */}
-                    <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm p-5 space-y-2">
+                    <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm p-5 space-y-2">
                       <p className="text-xs font-medium uppercase tracking-wider text-[#86868b] mb-1">Predicted Broke Date</p>
                       <p className={`text-2xl font-bold tracking-tight ${netBalance < totalAllowance * 0.05 || (brokeDateText.includes('Today') || brokeDateText.includes('Tomorrow')) ? 'text-red-500' : 'text-[#1d1d1f]'}`}>{brokeDateText}</p>
                       <p className="text-xs text-[#86868b] mt-1">Based on your spending speed over the past 7 days.</p>
@@ -1048,7 +1037,7 @@ export default function Home() {
                   </div>
 
                   {/* Preference Card */}
-                  <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm overflow-hidden">
+                  <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm overflow-hidden">
                     <div className="px-5 py-4 flex items-center justify-between border-b border-gray-50">
                       <div>
                         <p className="text-sm font-medium text-[#1d1d1f]">Allowance Cycle</p>
@@ -1088,30 +1077,28 @@ export default function Home() {
 
                     <div className="px-5 py-4 flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-[#1d1d1f]">Dashboard Theme</p>
-                        <p className="text-xs text-[#86868b] mt-0.5">Customize your main banner gradient</p>
+                        <p className="text-sm font-medium text-[#1d1d1f] dark:text-white">Appearance</p>
+                        <p className="text-xs text-[#86868b] mt-0.5">Switch between light and dark mode</p>
                       </div>
-                      <div className="flex gap-2">
-                        <input 
-                          type="color" 
-                          value={color1} 
-                          onChange={(e) => handleColor1Change(e.target.value)}
-                          className="h-8 w-12 rounded cursor-pointer border-0 bg-transparent p-0"
-                          title="Primary Color"
-                        />
-                        <input 
-                          type="color" 
-                          value={color2} 
-                          onChange={(e) => handleColor2Change(e.target.value)}
-                          className="h-8 w-12 rounded cursor-pointer border-0 bg-transparent p-0"
-                          title="Secondary Color"
-                        />
+                      <div className="flex bg-[#f5f5f7] dark:bg-neutral-700 p-1 rounded-lg border border-[#d2d2d7] dark:border-neutral-600">
+                        <button
+                          onClick={() => handleThemeChange('light')}
+                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${theme === 'light' ? 'bg-white shadow-sm text-[#1d1d1f]' : 'text-[#86868b] hover:text-[#1d1d1f] dark:hover:text-white'}`}
+                        >
+                          ☀️ Light
+                        </button>
+                        <button
+                          onClick={() => handleThemeChange('dark')}
+                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${theme === 'dark' ? 'bg-neutral-800 shadow-sm text-white' : 'text-[#86868b] hover:text-[#1d1d1f]'}`}
+                        >
+                          🌙 Dark
+                        </button>
                       </div>
                     </div>
                   </div>
 
                   {/* Profile Card */}
-                  <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm overflow-hidden">
+                  <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm overflow-hidden">
                     <div className="px-5 py-4 flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5f5f7] text-[#86868b]">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -1132,7 +1119,7 @@ export default function Home() {
                   </div>
 
                   {/* Danger Zone Card */}
-                  <div className="bg-white rounded-2xl border border-red-200 shadow-sm overflow-hidden">
+                  <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-red-200 shadow-sm overflow-hidden">
                     <div className="px-5 py-4">
                       <div className="flex items-center justify-between">
                         <div>
@@ -1152,7 +1139,7 @@ export default function Home() {
                   {/* FAQ Accordion Section */}
                   <div className="pt-2">
                     <h3 className="text-[13px] font-semibold text-[#86868b] uppercase tracking-wider mb-3 px-1">The Essential ECHO FAQs</h3>
-                    <div className="bg-white rounded-2xl border border-[#e8e8ed] shadow-sm overflow-hidden divide-y divide-[#f5f5f7]">
+                    <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm overflow-hidden divide-y divide-[#f5f5f7] dark:divide-neutral-700">
                       {ECHO_FAQS.map((faq, idx) => (
                         <div key={idx} className="flex flex-col">
                           <button
@@ -1197,7 +1184,7 @@ export default function Home() {
           </AnimatePresence>
 
           {/* MOBILE BOTTOM NAVIGATION BAR */}
-          <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-t border-[#e8e8ed] py-2 px-6 flex justify-around md:hidden">
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-t border-[#e8e8ed] dark:border-neutral-700 py-2 px-6 flex justify-around md:hidden">
             <button onClick={() => handleTabChange('home')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'home' ? 'text-[#1d1d1f]' : 'text-[#86868b]'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
