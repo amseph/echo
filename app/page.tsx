@@ -475,14 +475,14 @@ export default function Home() {
                 </svg>
               </div>
               <div className="flex-1 pt-0.5">
-                <h3 className="text-sm font-bold text-[#1d1d1f]">Delete Transaction?</h3>
-                <p className="text-xs text-[#86868b] mt-0.5">This action cannot be undone.</p>
+                <h3 className="text-sm font-bold text-[#1d1d1f] dark:text-neutral-100">Delete Transaction?</h3>
+                <p className="text-xs text-[#86868b] dark:text-neutral-400 mt-0.5">This action cannot be undone.</p>
               </div>
             </div>
             <div className="flex gap-2 mt-1">
               <button 
                 onClick={() => setConfirmDeleteId(null)}
-                className="flex-1 py-2 text-sm font-semibold text-[#1d1d1f] bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors active:scale-95"
+                className="flex-1 py-2 text-sm font-semibold text-[#1d1d1f] dark:text-neutral-100 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors active:scale-95"
               >
                 Cancel
               </button>
@@ -501,7 +501,7 @@ export default function Home() {
       {loading ? (
         <div className="mx-auto max-w-5xl space-y-6 animate-pulse mt-2 dark:opacity-50">
           {/* Header Placeholder */}
-          <div className="flex items-start justify-between border-b border-[#e8e8ed] pb-6 mb-8">
+          <div className="flex items-start justify-between border-b border-[#e8e8ed] dark:border-neutral-700 pb-6 mb-8">
             <div className="space-y-2">
               <div className="h-9 w-24 bg-[#e8e8ed] rounded-xl" />
               <div className="h-4 w-48 bg-[#e8e8ed] rounded-lg" />
@@ -513,8 +513,8 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 w-full max-w-4xl">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="bg-white dark:bg-neutral-800 h-[90px] p-5 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm flex flex-col justify-between">
-                <div className="h-3 w-16 bg-[#f5f5f7] rounded-md" />
-                <div className="h-5 w-24 bg-[#f5f5f7] rounded-md" />
+                <div className="h-3 w-16 bg-[#f5f5f7] dark:bg-neutral-900 rounded-md" />
+                <div className="h-5 w-24 bg-[#f5f5f7] dark:bg-neutral-900 rounded-md" />
               </div>
             ))}
           </div>
@@ -530,18 +530,18 @@ export default function Home() {
               </svg>
             </div>
 
-            <h2 className="text-xl font-semibold tracking-tight text-[#1d1d1f]">Welcome to ECHO</h2>
-            <p className="mt-2 text-sm leading-relaxed text-[#86868b]">
+            <h2 className="text-xl font-semibold tracking-tight text-[#1d1d1f] dark:text-neutral-100">Welcome to ECHO</h2>
+            <p className="mt-2 text-sm leading-relaxed text-[#86868b] dark:text-neutral-400">
               Let’s initialize your tracking cycle. Enter your current starting allowance or pocket money to unlock your dashboard.
             </p>
 
             <form onSubmit={handleInitializeCycle} className="mt-6 space-y-4">
               <div className="text-left">
-                <label className="block text-xs font-medium text-[#86868b] mb-1 pl-1">Budget Cycle</label>
+                <label className="block text-xs font-medium text-[#86868b] dark:text-neutral-400 mb-1 pl-1">Budget Cycle</label>
                 <select
                   value={cycleType}
                   onChange={(e) => setCycleType(e.target.value)}
-                  className="w-full rounded-xl border border-[#d2d2d7] px-4 py-3 text-sm bg-white outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
+                  className="w-full rounded-xl border border-[#d2d2d7] dark:border-neutral-600 px-4 py-3 text-sm bg-white dark:bg-neutral-800 outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
                 >
                   <option value="weekly">Weekly (Resets Mondays)</option>
                   <option value="semi-monthly">Semi-Monthly (1st &amp; 15th)</option>
@@ -550,7 +550,7 @@ export default function Home() {
               </div>
 
               <div className="text-left">
-                <label className="block text-xs font-medium text-[#86868b] mb-1 pl-1">Starting Amount (₱)</label>
+                <label className="block text-xs font-medium text-[#86868b] dark:text-neutral-400 mb-1 pl-1">Starting Amount (₱)</label>
                 <input
                   type="number"
                   required
@@ -558,16 +558,16 @@ export default function Home() {
                   placeholder="0.00"
                   value={initialAllowance}
                   onChange={(e) => setInitialAllowance(e.target.value)}
-                  className="w-full rounded-xl border border-[#d2d2d7] px-4 py-3 text-sm placeholder-[#86868b] outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
+                  className="w-full rounded-xl border border-[#d2d2d7] dark:border-neutral-600 px-4 py-3 text-sm placeholder-[#86868b] outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
                 />
               </div>
 
               <div className="text-left">
-                <label className="block text-xs font-medium text-[#86868b] mb-1 pl-1">Category</label>
+                <label className="block text-xs font-medium text-[#86868b] dark:text-neutral-400 mb-1 pl-1">Category</label>
                 <select
                   value={initialCategory}
                   onChange={(e) => setInitialCategory(e.target.value)}
-                  className="w-full rounded-xl border border-[#d2d2d7] px-4 py-3 text-sm bg-white outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
+                  className="w-full rounded-xl border border-[#d2d2d7] dark:border-neutral-600 px-4 py-3 text-sm bg-white dark:bg-neutral-800 outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
                 >
                   <option value="Regular Weekly Allowance">Regular Weekly Allowance</option>
                   <option value="Parents / Family">Parents / Family</option>
@@ -645,44 +645,44 @@ export default function Home() {
                   {/* METRIC CARDS */}
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-4">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Allowance</p>
+                      <p className="text-[10px] font-bold text-gray-400 dark:text-neutral-400 uppercase tracking-wider">Allowance</p>
                       <p className="text-xl font-bold text-[#1d2d2a] mt-1">₱{totalAllowance.toFixed(2)}</p>
                       <p className="text-[10px] text-green-500 mt-1 font-medium">● Inflow this cycle</p>
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-4">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Expenses</p>
-                      <p className="text-xl font-bold text-[#1d1d1f] mt-1">₱{totalExpenses.toFixed(2)}</p>
-                      <p className="text-[10px] text-gray-400 mt-1 font-medium">{homeBurnPct}% of budget</p>
+                      <p className="text-[10px] font-bold text-gray-400 dark:text-neutral-400 uppercase tracking-wider">Expenses</p>
+                      <p className="text-xl font-bold text-[#1d1d1f] dark:text-neutral-100 mt-1">₱{totalExpenses.toFixed(2)}</p>
+                      <p className="text-[10px] text-gray-400 dark:text-neutral-400 mt-1 font-medium">{homeBurnPct}% of budget</p>
                     </motion.div>
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${totalDebt > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-gray-100'}`}>
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${totalDebt > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700'}`}>
                       <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Debt</p>
                       <p className="text-xl font-bold text-amber-700 mt-1">₱{totalDebt.toFixed(2)}</p>
                       <p className="text-[10px] text-amber-500 mt-1 font-medium">{totalDebt > 0 ? '⚠ Outstanding' : '● Clear'}</p>
                     </motion.div>
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Net Balance</p>
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700'}`}>
+                      <p className="text-[10px] font-bold text-gray-400 dark:text-neutral-400 uppercase tracking-wider">Net Balance</p>
                       <p className={`text-xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : 'text-blue-600 dark:text-blue-400'}`}>₱{netBalance.toFixed(2)}</p>
                       <p className={`text-[10px] mt-1 font-medium ${netBalance <= 0 ? 'text-red-400' : 'text-blue-400'}`}>{netBalance <= 0 ? '● Deficit' : '● Available'}</p>
                     </motion.div>
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${daysRemaining !== null && daysRemaining <= 3 ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100'}`}>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Runway</p>
-                      <p className={`text-xl font-bold mt-1 ${daysRemaining === null || netBalance <= 0 ? 'text-gray-300' : daysRemaining <= 3 ? 'text-red-500' : 'text-[#1d1d1f]'}`}>
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${daysRemaining !== null && daysRemaining <= 3 ? 'bg-red-50 border-red-200' : 'bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700'}`}>
+                      <p className="text-[10px] font-bold text-gray-400 dark:text-neutral-400 uppercase tracking-wider">Runway</p>
+                      <p className={`text-xl font-bold mt-1 ${daysRemaining === null || netBalance <= 0 ? 'text-gray-300 dark:text-neutral-500' : daysRemaining <= 3 ? 'text-red-500' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
                         {daysRemaining === null || netBalance <= 0 ? '—' : `${daysRemaining}d`}
                       </p>
-                      <p className="text-[10px] text-gray-400 mt-1 font-medium">₱{dailyAverageSpend.toFixed(0)}/day avg</p>
+                      <p className="text-[10px] text-gray-400 dark:text-neutral-400 mt-1 font-medium">₱{dailyAverageSpend.toFixed(0)}/day avg</p>
                     </motion.div>
                   </div>
 
                   {/* PREDICTIVE INSIGHT STRIP */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className={`rounded-2xl border p-4 ${isCritical ? 'bg-red-50 border-red-200' : 'bg-[#1d2d2a]/5 border-[#1d2d2a]/10'}`}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#86868b] mb-1">Predicted Broke Date</p>
-                      <p className={`text-2xl font-bold tracking-tight ${isCritical ? 'text-red-500' : 'text-[#1d1d1f]'}`}>{homeBrokeText}</p>
-                      <p className="text-[10px] text-[#86868b] mt-1">Based on 7-day spending velocity</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#86868b] dark:text-neutral-400 mb-1">Predicted Broke Date</p>
+                      <p className={`text-2xl font-bold tracking-tight ${isCritical ? 'text-red-500' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>{homeBrokeText}</p>
+                      <p className="text-[10px] text-[#86868b] dark:text-neutral-400 mt-1">Based on 7-day spending velocity</p>
                     </div>
-                    <div className={`rounded-2xl border p-4 ${homeBurnPct >= 85 ? 'bg-red-50 border-red-300' : homeBurnPct >= 60 ? 'bg-amber-50 border-amber-200' : 'bg-[#f5f5f7] border-[#e8e8ed]'}`}>
-                      <p className="text-base font-bold text-[#1d1d1f] mb-0.5">{homeVibeTitle}</p>
-                      <p className="text-xs text-[#424245] leading-relaxed">{homeVibeDesc}</p>
+                    <div className={`rounded-2xl border p-4 ${homeBurnPct >= 85 ? 'bg-red-50 border-red-300' : homeBurnPct >= 60 ? 'bg-amber-50 border-amber-200' : 'bg-[#f5f5f7] dark:bg-neutral-900 border-[#e8e8ed] dark:border-neutral-700'}`}>
+                      <p className="text-base font-bold text-[#1d1d1f] dark:text-neutral-100 mb-0.5">{homeVibeTitle}</p>
+                      <p className="text-xs text-[#424245] dark:text-neutral-300 leading-relaxed">{homeVibeDesc}</p>
                       {totalDebt > 0 && <p className="text-[11px] font-medium text-amber-600 mt-2 pt-2 border-t border-amber-200">⚠️ Utang Alert: You owe ₱{totalDebt.toFixed(2)}. Clear this soon!</p>}
                     </div>
                   </div>
@@ -693,16 +693,16 @@ export default function Home() {
                     <div className="lg:col-span-7 space-y-5">
                       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25, ease: 'easeOut' }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5">
                         <div className="flex items-center justify-between mb-4">
-                          <h2 className="text-sm font-bold text-[#1d1d1f] tracking-tight">Log Transaction</h2>
-                          <span className="text-[10px] text-[#86868b] bg-[#f5f5f7] rounded-lg px-2 py-1 font-medium">{formData.allowance_cycle}</span>
+                          <h2 className="text-sm font-bold text-[#1d1d1f] dark:text-neutral-100 tracking-tight">Log Transaction</h2>
+                          <span className="text-[10px] text-[#86868b] dark:text-neutral-400 bg-[#f5f5f7] dark:bg-neutral-900 rounded-lg px-2 py-1 font-medium">{formData.allowance_cycle}</span>
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-3">
                           <input type="date" required
-                            className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                            className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
                             value={formData.transaction_date}
                             onChange={(e) => { const d = e.target.value; setFormData({ ...formData, transaction_date: d, allowance_cycle: getAllowanceCycle(d) }); }} />
                           <div className="grid grid-cols-2 gap-3">
-                            <select className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm bg-white text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                            <select className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm bg-white dark:bg-neutral-800 text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
                               value={formData.transaction_type} onChange={(e) => handleTypeChange(e.target.value)}>
                               <option value="expense">Expense</option>
                               <option value="allowance">Allowance</option>
@@ -711,7 +711,7 @@ export default function Home() {
                             </select>
                             <div className="relative flex items-center">
                               <input type="number" step="0.01" required placeholder="₱ 0.00"
-                                className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all pr-10"
+                                className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all pr-10"
                                 value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
                               <button
                                 type="button"
@@ -744,10 +744,10 @@ export default function Home() {
                           </div>
                           {formData.transaction_type === 'debt' ? (
                             <input type="text" required placeholder="Lender (e.g. Juan, Aling Nena)"
-                              className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                              className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
                               value={formData.expense_category} onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })} />
                           ) : (
-                            <select className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm bg-white text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                            <select className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm bg-white dark:bg-neutral-800 text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
                               value={formData.expense_category} onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })}>
                               {formData.transaction_type === 'allowance' ? (<>
                                 <option value="Regular Weekly Allowance">Regular Weekly Allowance</option>
@@ -771,7 +771,7 @@ export default function Home() {
                           )}
                           {formData.expense_category === 'Other' && (
                             <input type="text" required placeholder="Specify category" maxLength={25}
-                              className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] text-sm text-[#1d1d1f] outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                              className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
                               value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} />
                           )}
                           <button type="submit" disabled={loading}
@@ -787,7 +787,7 @@ export default function Home() {
                       </motion.div>
                       {/* CHART */}
                       <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5">
-                        <h2 className="text-sm font-bold text-[#1d1d1f] tracking-tight mb-3">Expense Distribution</h2>
+                        <h2 className="text-sm font-bold text-[#1d1d1f] dark:text-neutral-100 tracking-tight mb-3">Expense Distribution</h2>
                         {isMounted && chartData.length > 0 ? (
                           <div className="flex items-center gap-4">
                             <div className="h-40 w-40 flex-shrink-0">
@@ -805,15 +805,15 @@ export default function Home() {
                                 <div key={entry.name} className="flex items-center justify-between text-xs gap-2">
                                   <div className="flex items-center gap-1.5 min-w-0">
                                     <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: ['#1d2d2a', '#2d4a3e', '#b7e887', '#86c46a', '#5a8f4a'][i % 5] }} />
-                                    <span className="text-[#424245] truncate">{entry.name}</span>
+                                    <span className="text-[#424245] dark:text-neutral-300 truncate">{entry.name}</span>
                                   </div>
-                                  <span className="font-bold text-[#1d1d1f] flex-shrink-0">₱{entry.value.toFixed(2)}</span>
+                                  <span className="font-bold text-[#1d1d1f] dark:text-neutral-100 flex-shrink-0">₱{entry.value.toFixed(2)}</span>
                                 </div>
                               ))}
                             </div>
                           </div>
                         ) : (
-                          <p className="text-xs text-gray-400 text-center py-10">Log expenses to generate distribution.</p>
+                          <p className="text-xs text-gray-400 dark:text-neutral-400 text-center py-10">Log expenses to generate distribution.</p>
                         )}
                       </div>
                     </div>
@@ -821,7 +821,7 @@ export default function Home() {
                     <div className="lg:col-span-5 bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5 max-h-[640px] overflow-y-auto">
                       <h2 className="text-sm font-bold text-[#1d1d1f] dark:text-white tracking-tight mb-3 sticky top-0 bg-white dark:bg-neutral-800 pb-2 border-b border-gray-100 dark:border-neutral-700">Transaction History</h2>
                       {transactions.length === 0 ? (
-                        <p className="text-xs text-gray-400 text-center py-10">No transactions yet.</p>
+                        <p className="text-xs text-gray-400 dark:text-neutral-400 text-center py-10">No transactions yet.</p>
                       ) : (
                         <motion.div className="space-y-1" variants={listContainer} initial="hidden" animate="visible">
                           <AnimatePresence>
@@ -829,17 +829,17 @@ export default function Home() {
                               const isInflow = tx.transaction_type === 'allowance' || tx.transaction_type === 'shortage_request' || tx.transaction_type === 'debt';
                               const isDebtPay = tx.transaction_type === 'debt_payment';
                               return (
-                                <motion.div key={tx.id} variants={listItem} exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0 group">
+                                <motion.div key={tx.id} variants={listItem} exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }} className="flex items-center justify-between py-2.5 border-b border-gray-50 dark:border-neutral-700 last:border-0 group">
                                   <div className="min-w-0 flex-1">
-                                    <p className="font-medium text-sm text-[#1d1d1f] truncate">{isDebtPay ? 'Paid Back Loan (Soli)' : tx.expense_category}</p>
-                                    <p className="text-[10px] text-[#86868b]">{tx.transaction_date} · {tx.allowance_cycle}</p>
+                                    <p className="font-medium text-sm text-[#1d1d1f] dark:text-neutral-100 truncate">{isDebtPay ? 'Paid Back Loan (Soli)' : tx.expense_category}</p>
+                                    <p className="text-[10px] text-[#86868b] dark:text-neutral-400">{tx.transaction_date} · {tx.allowance_cycle}</p>
                                   </div>
                                   <div className="flex items-center gap-3 ml-3 flex-shrink-0">
                                     <div className="text-right">
-                                      <p className={`font-bold text-sm ${isInflow ? 'text-green-600' : 'text-[#1d1d1f]'}`}>
+                                      <p className={`font-bold text-sm ${isInflow ? 'text-green-600' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
                                         {isDebtPay ? `−₱${parseFloat(tx.amount).toFixed(2)}` : `${isInflow ? '+' : '−'}₱${parseFloat(tx.amount).toFixed(2)}`}
                                       </p>
-                                      <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b]">{isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}</p>
+                                      <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b] dark:text-neutral-400">{isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}</p>
                                     </div>
                                     <button 
                                       onClick={() => handleDeleteTransaction(tx.id)}
@@ -894,17 +894,17 @@ export default function Home() {
                   <div className="max-w-md mx-auto space-y-6 pt-4 pb-24">
 
                     {/* Header */}
-                    <h2 className="text-2xl font-semibold text-[#1d1d1f]">Financial Analytics</h2>
+                    <h2 className="text-2xl font-semibold text-[#1d1d1f] dark:text-neutral-100">Financial Analytics</h2>
 
                     {/* Burn Rate Card */}
                     <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm p-5 space-y-3">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-[#1d1d1f]">Budget Utilization</p>
-                        <p className={`text-sm font-bold ${burnPercentage >= 70 ? 'text-red-500' : 'text-[#1d1d1f]'}`}>
+                        <p className="text-sm font-medium text-[#1d1d1f] dark:text-neutral-100">Budget Utilization</p>
+                        <p className={`text-sm font-bold ${burnPercentage >= 70 ? 'text-red-500' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
                           {burnPercentage}%
                         </p>
                       </div>
-                      <div className="h-2.5 w-full rounded-full bg-[#f5f5f7] overflow-hidden">
+                      <div className="h-2.5 w-full rounded-full bg-[#f5f5f7] dark:bg-neutral-900 overflow-hidden">
                         <motion.div
                           className={`h-full rounded-full ${burnPercentage >= 90 ? 'bg-red-500' : burnPercentage >= 70 ? 'bg-amber-500' : 'bg-[#1d1d1f]'
                             }`}
@@ -913,14 +913,14 @@ export default function Home() {
                           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
                         />
                       </div>
-                      <p className="text-xs text-[#86868b]">
+                      <p className="text-xs text-[#86868b] dark:text-neutral-400">
                         {burnPercentage}% of your ₱{totalAllowance.toFixed(2)} allowance has been spent this cycle.
                       </p>
                     </div>
 
                     {/* Spending Distribution Card */}
                     <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm p-5 space-y-4">
-                      <p className="text-sm font-medium text-[#1d1d1f]">Spending Distribution</p>
+                      <p className="text-sm font-medium text-[#1d1d1f] dark:text-neutral-100">Spending Distribution</p>
                       {chartData.length > 0 ? (
                         <>
                           <div className="flex justify-center">
@@ -948,18 +948,18 @@ export default function Home() {
                               <div key={entry.name} className="flex items-center justify-between text-xs">
                                 <div className="flex items-center gap-2">
                                   <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                                  <span className="text-[#1d1d1f] font-medium truncate max-w-[140px]">{entry.name}</span>
+                                  <span className="text-[#1d1d1f] dark:text-neutral-100 font-medium truncate max-w-[140px]">{entry.name}</span>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                  <span className="text-[#86868b]">{chartTotal > 0 ? Math.round((entry.value / chartTotal) * 100) : 0}%</span>
-                                  <span className="text-[#1d1d1f] font-semibold">₱{entry.value.toFixed(2)}</span>
+                                  <span className="text-[#86868b] dark:text-neutral-400">{chartTotal > 0 ? Math.round((entry.value / chartTotal) * 100) : 0}%</span>
+                                  <span className="text-[#1d1d1f] dark:text-neutral-100 font-semibold">₱{entry.value.toFixed(2)}</span>
                                 </div>
                               </div>
                             ))}
                           </div>
                         </>
                       ) : (
-                        <p className="text-xs text-[#86868b] text-center py-8">Log expenses to generate category metrics.</p>
+                        <p className="text-xs text-[#86868b] dark:text-neutral-400 text-center py-8">Log expenses to generate category metrics.</p>
                       )}
                     </div>
 
@@ -974,7 +974,7 @@ export default function Home() {
 
                     {/* Net Flow Card */}
                     <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm p-5 space-y-4">
-                      <p className="text-sm font-medium text-[#1d1d1f]">Cash Flow Summary</p>
+                      <p className="text-sm font-medium text-[#1d1d1f] dark:text-neutral-100">Cash Flow Summary</p>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-green-50 rounded-xl p-4 text-center">
                           <p className="text-[10px] font-semibold text-green-700 uppercase tracking-wider">Total Inflows</p>
@@ -986,7 +986,7 @@ export default function Home() {
                         </div>
                       </div>
                       <div className="flex items-center justify-between pt-2 border-t border-[#f5f5f7]">
-                        <p className="text-xs text-[#86868b]">Net Balance</p>
+                        <p className="text-xs text-[#86868b] dark:text-neutral-400">Net Balance</p>
                         <p className={`text-sm font-bold ${netBalance >= 0 ? 'text-[#1d1d1f] dark:text-white' : 'text-red-500'}`}>
                           {netBalance >= 0 ? '+' : ''}₱{netBalance.toFixed(2)}
                         </p>
@@ -995,17 +995,17 @@ export default function Home() {
 
                     {/* Broke Clock Card */}
                     <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm p-5 space-y-2">
-                      <p className="text-xs font-medium uppercase tracking-wider text-[#86868b] mb-1">Predicted Broke Date</p>
-                      <p className={`text-2xl font-bold tracking-tight ${netBalance < totalAllowance * 0.05 || (brokeDateText.includes('Today') || brokeDateText.includes('Tomorrow')) ? 'text-red-500' : 'text-[#1d1d1f]'}`}>{brokeDateText}</p>
-                      <p className="text-xs text-[#86868b] mt-1">Based on your spending speed over the past 7 days.</p>
+                      <p className="text-xs font-medium uppercase tracking-wider text-[#86868b] dark:text-neutral-400 mb-1">Predicted Broke Date</p>
+                      <p className={`text-2xl font-bold tracking-tight ${netBalance < totalAllowance * 0.05 || (brokeDateText.includes('Today') || brokeDateText.includes('Tomorrow')) ? 'text-red-500' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>{brokeDateText}</p>
+                      <p className="text-xs text-[#86868b] dark:text-neutral-400 mt-1">Based on your spending speed over the past 7 days.</p>
                     </div>
 
                     {/* Vibe Check Roast Card */}
-                    <div className="bg-[#f5f5f7] rounded-2xl p-5 border border-[#e8e8ed]">
-                      <p className="text-base font-semibold text-[#1d1d1f] mb-1">{vibeTitle}</p>
-                      <p className="text-sm text-[#424245] leading-relaxed">{vibeDesc}</p>
+                    <div className="bg-[#f5f5f7] dark:bg-neutral-900 rounded-2xl p-5 border border-[#e8e8ed] dark:border-neutral-700">
+                      <p className="text-base font-semibold text-[#1d1d1f] dark:text-neutral-100 mb-1">{vibeTitle}</p>
+                      <p className="text-sm text-[#424245] dark:text-neutral-300 leading-relaxed">{vibeDesc}</p>
                       {totalDebt > 0 && (
-                        <div className="mt-3 pt-2 border-t border-[#e8e8ed]/60 text-xs font-medium text-amber-600">
+                        <div className="mt-3 pt-2 border-t border-[#e8e8ed] dark:border-neutral-700/60 text-xs font-medium text-amber-600">
                           ⚠️ Utang Alert: You owe someone ₱{totalDebt.toFixed(2)}. Reminder: clear this or your karma points will suffer.
                         </div>
                       )}
@@ -1027,7 +1027,7 @@ export default function Home() {
 
                   {/* Title Block */}
                   <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-semibold text-[#1d1d1f]">Settings</h2>
+                    <h2 className="text-2xl font-semibold text-[#1d1d1f] dark:text-neutral-100">Settings</h2>
                     <button
                       onClick={() => handleTabChange('home')}
                       className="text-xs font-medium text-[#0071e3] hover:underline"
@@ -1038,15 +1038,15 @@ export default function Home() {
 
                   {/* Preference Card */}
                   <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm overflow-hidden">
-                    <div className="px-5 py-4 flex items-center justify-between border-b border-gray-50">
+                    <div className="px-5 py-4 flex items-center justify-between border-b border-gray-50 dark:border-neutral-700">
                       <div>
-                        <p className="text-sm font-medium text-[#1d1d1f]">Allowance Cycle</p>
-                        <p className="text-xs text-[#86868b] mt-0.5">Controls how your metrics reset</p>
+                        <p className="text-sm font-medium text-[#1d1d1f] dark:text-neutral-100">Allowance Cycle</p>
+                        <p className="text-xs text-[#86868b] dark:text-neutral-400 mt-0.5">Controls how your metrics reset</p>
                       </div>
                       <select
                         value={cyclePreference}
                         onChange={(e) => handleCycleChange(e.target.value)}
-                        className="rounded-lg border border-[#d2d2d7] bg-[#f5f5f7] px-3 py-1.5 text-xs font-medium text-[#1d1d1f] outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
+                        className="rounded-lg border border-[#d2d2d7] dark:border-neutral-600 bg-[#f5f5f7] dark:bg-neutral-900 px-3 py-1.5 text-xs font-medium text-[#1d1d1f] dark:text-neutral-100 outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
                       >
                         <option value="Weekly">Weekly</option>
                         <option value="Semi-Monthly">Semi-Monthly</option>
@@ -1054,21 +1054,21 @@ export default function Home() {
                       </select>
                     </div>
 
-                    <div className="px-5 py-4 flex items-center justify-between border-b border-gray-50">
+                    <div className="px-5 py-4 flex items-center justify-between border-b border-gray-50 dark:border-neutral-700">
                       <div>
-                        <p className="text-sm font-medium text-[#1d1d1f]">Personality Tone</p>
-                        <p className="text-xs text-[#86868b] mt-0.5">Coach (Encouraging) vs Roast (Insulting)</p>
+                        <p className="text-sm font-medium text-[#1d1d1f] dark:text-neutral-100">Personality Tone</p>
+                        <p className="text-xs text-[#86868b] dark:text-neutral-400 mt-0.5">Coach (Encouraging) vs Roast (Insulting)</p>
                       </div>
-                      <div className="flex bg-[#f5f5f7] p-1 rounded-lg border border-[#d2d2d7]">
+                      <div className="flex bg-[#f5f5f7] dark:bg-neutral-900 p-1 rounded-lg border border-[#d2d2d7] dark:border-neutral-600">
                         <button
                           onClick={() => handleToneChange('Coach')}
-                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${toneMode === 'Coach' ? 'bg-white shadow-sm text-[#1d1d1f]' : 'text-[#86868b] hover:text-[#1d1d1f]'}`}
+                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${toneMode === 'Coach' ? 'bg-white dark:bg-neutral-800 shadow-sm text-[#1d1d1f] dark:text-neutral-100' : 'text-[#86868b] dark:text-neutral-400 hover:text-[#1d1d1f] dark:text-neutral-100'}`}
                         >
                           Coach
                         </button>
                         <button
                           onClick={() => handleToneChange('Roast')}
-                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${toneMode === 'Roast' ? 'bg-white shadow-sm text-[#1d1d1f]' : 'text-[#86868b] hover:text-[#1d1d1f]'}`}
+                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${toneMode === 'Roast' ? 'bg-white dark:bg-neutral-800 shadow-sm text-[#1d1d1f] dark:text-neutral-100' : 'text-[#86868b] dark:text-neutral-400 hover:text-[#1d1d1f] dark:text-neutral-100'}`}
                         >
                           Roast
                         </button>
@@ -1078,18 +1078,18 @@ export default function Home() {
                     <div className="px-5 py-4 flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-[#1d1d1f] dark:text-white">Appearance</p>
-                        <p className="text-xs text-[#86868b] mt-0.5">Switch between light and dark mode</p>
+                        <p className="text-xs text-[#86868b] dark:text-neutral-400 mt-0.5">Switch between light and dark mode</p>
                       </div>
                       <div className="flex bg-[#f5f5f7] dark:bg-neutral-700 p-1 rounded-lg border border-[#d2d2d7] dark:border-neutral-600">
                         <button
                           onClick={() => handleThemeChange('light')}
-                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${theme === 'light' ? 'bg-white shadow-sm text-[#1d1d1f]' : 'text-[#86868b] hover:text-[#1d1d1f] dark:hover:text-white'}`}
+                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${theme === 'light' ? 'bg-white dark:bg-neutral-800 shadow-sm text-[#1d1d1f] dark:text-neutral-100' : 'text-[#86868b] dark:text-neutral-400 hover:text-[#1d1d1f] dark:hover:text-white'}`}
                         >
                           ☀️ Light
                         </button>
                         <button
                           onClick={() => handleThemeChange('dark')}
-                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${theme === 'dark' ? 'bg-neutral-800 shadow-sm text-white' : 'text-[#86868b] hover:text-[#1d1d1f]'}`}
+                          className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${theme === 'dark' ? 'bg-neutral-800 shadow-sm text-white' : 'text-[#86868b] dark:text-neutral-400 hover:text-[#1d1d1f] dark:text-neutral-100'}`}
                         >
                           🌙 Dark
                         </button>
@@ -1100,18 +1100,18 @@ export default function Home() {
                   {/* Profile Card */}
                   <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm overflow-hidden">
                     <div className="px-5 py-4 flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5f5f7] text-[#86868b]">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5f5f7] dark:bg-neutral-900 text-[#86868b] dark:text-neutral-400">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                         </svg>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-[#1d1d1f]">Account</p>
-                        <p className="text-xs text-[#86868b] truncate">{userEmail || '—'}</p>
+                        <p className="text-sm font-medium text-[#1d1d1f] dark:text-neutral-100">Account</p>
+                        <p className="text-xs text-[#86868b] dark:text-neutral-400 truncate">{userEmail || '—'}</p>
                       </div>
                       <button
                         onClick={handleSignOut}
-                        className="text-xs font-medium text-[#86868b] hover:text-[#1d1d1f] transition-colors"
+                        className="text-xs font-medium text-[#86868b] dark:text-neutral-400 hover:text-[#1d1d1f] dark:text-neutral-100 transition-colors"
                       >
                         Sign Out
                       </button>
@@ -1124,7 +1124,7 @@ export default function Home() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-sm font-medium text-red-600">Reset Ledger Data</p>
-                          <p className="text-xs text-[#86868b] mt-0.5">Wipe all transaction history to start a fresh cycle.</p>
+                          <p className="text-xs text-[#86868b] dark:text-neutral-400 mt-0.5">Wipe all transaction history to start a fresh cycle.</p>
                         </div>
                         <button
                           onClick={handleResetLedger}
@@ -1138,19 +1138,19 @@ export default function Home() {
 
                   {/* FAQ Accordion Section */}
                   <div className="pt-2">
-                    <h3 className="text-[13px] font-semibold text-[#86868b] uppercase tracking-wider mb-3 px-1">The Essential ECHO FAQs</h3>
+                    <h3 className="text-[13px] font-semibold text-[#86868b] dark:text-neutral-400 uppercase tracking-wider mb-3 px-1">The Essential ECHO FAQs</h3>
                     <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm overflow-hidden divide-y divide-[#f5f5f7] dark:divide-neutral-700">
                       {ECHO_FAQS.map((faq, idx) => (
                         <div key={idx} className="flex flex-col">
                           <button
                             onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
-                            className="flex items-center justify-between px-5 py-4 text-left hover:bg-[#fcfcfd] transition-colors focus:outline-none"
+                            className="flex items-center justify-between px-5 py-4 text-left hover:bg-[#fcfcfd] dark:bg-neutral-700 transition-colors focus:outline-none"
                           >
-                            <span className="text-sm font-semibold text-[#1d1d1f] pr-4">{faq.question}</span>
+                            <span className="text-sm font-semibold text-[#1d1d1f] dark:text-neutral-100 pr-4">{faq.question}</span>
                             <motion.svg
                               animate={{ rotate: expandedFaq === idx ? 180 : 0 }}
                               transition={{ duration: 0.2 }}
-                              className="w-4 h-4 text-[#86868b] flex-shrink-0"
+                              className="w-4 h-4 text-[#86868b] dark:text-neutral-400 flex-shrink-0"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -1169,7 +1169,7 @@ export default function Home() {
                                 className="overflow-hidden"
                               >
                                 <div className="px-5 pb-4 pt-1">
-                                  <p className="text-[13px] leading-relaxed text-[#86868b]">{faq.answer}</p>
+                                  <p className="text-[13px] leading-relaxed text-[#86868b] dark:text-neutral-400">{faq.answer}</p>
                                 </div>
                               </motion.div>
                             )}
@@ -1185,21 +1185,21 @@ export default function Home() {
 
           {/* MOBILE BOTTOM NAVIGATION BAR */}
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-t border-[#e8e8ed] dark:border-neutral-700 py-2 px-6 flex justify-around md:hidden">
-            <button onClick={() => handleTabChange('home')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'home' ? 'text-[#1d1d1f]' : 'text-[#86868b]'}`}>
+            <button onClick={() => handleTabChange('home')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'home' ? 'text-[#1d1d1f] dark:text-neutral-100' : 'text-[#86868b] dark:text-neutral-400'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
               </svg>
               <span className="text-[10px] font-medium">Home</span>
             </button>
 
-            <button onClick={() => handleTabChange('analytics')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'analytics' ? 'text-[#1d1d1f]' : 'text-[#86868b]'}`}>
+            <button onClick={() => handleTabChange('analytics')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'analytics' ? 'text-[#1d1d1f] dark:text-neutral-100' : 'text-[#86868b] dark:text-neutral-400'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
               </svg>
               <span className="text-[10px] font-medium">Analytics</span>
             </button>
 
-            <button onClick={() => handleTabChange('settings')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'settings' ? 'text-[#1d1d1f]' : 'text-[#86868b]'}`}>
+            <button onClick={() => handleTabChange('settings')} className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'settings' ? 'text-[#1d1d1f] dark:text-neutral-100' : 'text-[#86868b] dark:text-neutral-400'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.99l1.005.828c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
