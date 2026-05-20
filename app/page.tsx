@@ -397,6 +397,16 @@ export default function Home() {
             else if (homeBurnPct >= 60 && homeBurnPct < 85) { homeVibeTitle = 'Petsa de Peligro '; homeVibeDesc = 'Spending velocity getting sketchy. Slow down!'; }
             else if (homeBurnPct >= 85) { homeVibeTitle = 'Walang-Wala Mode '; homeVibeDesc = 'Budget critical. Instant noodles era has arrived.'; }
             const isCritical = netBalance <= 0 || homeBrokeText === 'Today ' || homeBrokeText === 'Tomorrow ';
+
+            const listContainer = {
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.1 } },
+            };
+            const listItem = {
+              hidden: { opacity: 0, x: -20 },
+              visible: { opacity: 1, x: 0, transition: { duration: 0.22, ease: 'easeOut' } },
+            };
+
             return (
               <motion.div key="home" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="mx-auto max-w-5xl space-y-5 pb-24">
                 {/* HEADER */}
@@ -575,12 +585,12 @@ export default function Home() {
                     {transactions.length === 0 ? (
                       <p className="text-xs text-gray-400 text-center py-10">No transactions yet.</p>
                     ) : (
-                      <div className="space-y-1">
+                      <motion.div className="space-y-1" variants={listContainer} initial="hidden" animate="visible">
                         {transactions.map((tx) => {
                           const isInflow = tx.transaction_type === 'allowance' || tx.transaction_type === 'shortage_request' || tx.transaction_type === 'debt';
                           const isDebtPay = tx.transaction_type === 'debt_payment';
                           return (
-                            <div key={tx.id} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
+                            <motion.div key={tx.id} variants={listItem} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
                               <div className="min-w-0 flex-1">
                                 <p className="font-medium text-sm text-[#1d1d1f] truncate">{isDebtPay ? 'Paid Back Loan (Soli)' : tx.expense_category}</p>
                                 <p className="text-[10px] text-[#86868b]">{tx.transaction_date} · {tx.allowance_cycle}</p>
@@ -591,10 +601,10 @@ export default function Home() {
                                 </p>
                                 <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b]">{isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}</p>
                               </div>
-                            </div>
+                            </motion.div>
                           );
                         })}
-                      </div>
+                      </motion.div>
                     )}
                   </div>
                 </div>
