@@ -853,10 +853,12 @@ export default function Home() {
                         </p>
                       </div>
                       <div className="h-2.5 w-full rounded-full bg-[#f5f5f7] overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${burnPercentage >= 90 ? 'bg-red-500' : burnPercentage >= 70 ? 'bg-amber-500' : 'bg-[#1d1d1f]'
+                        <motion.div
+                          className={`h-full rounded-full ${burnPercentage >= 90 ? 'bg-red-500' : burnPercentage >= 70 ? 'bg-amber-500' : 'bg-[#1d1d1f]'
                             }`}
-                          style={{ width: `${burnPercentage}%` }}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${burnPercentage}%` }}
+                          transition={{ type: 'spring', stiffness: 100, damping: 20 }}
                         />
                       </div>
                       <p className="text-xs text-[#86868b]">
