@@ -73,7 +73,7 @@ export default function Home() {
         setFormData(prev => ({ ...prev, amount: totalAmount!.toFixed(2) }));
         setMessage({ type: 'success', text: `Receipt scanned: ₱${totalAmount.toFixed(2)} detected.` });
       } else {
-        setMessage({ type: 'error', text: 'Could not detect an amount from the receipt. Try a clearer photo.' });
+        alert('Could not read receipt clearly. Please upload a clearer image.');
       }
     } catch (err) {
       console.error('OCR Error:', err);
