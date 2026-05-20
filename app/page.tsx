@@ -64,12 +64,17 @@ export default function Home() {
   const [customCategory, setCustomCategory] = useState('');
   const [cyclePreference, setCyclePreference] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('echo_cycle') || 'Monthly' : 'Monthly');
   const [toneMode, setToneMode] = useState<'Coach' | 'Roast'>(() => typeof window !== 'undefined' ? (localStorage.getItem('echo_tone') as 'Coach' | 'Roast') || 'Roast' : 'Roast');
+  const [color1, setColor1] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('echo_color1') || '#1d2d2a' : '#1d2d2a');
+  const [color2, setColor2] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('echo_color2') || '#1d2d2a' : '#1d2d2a');
   const [userEmail, setUserEmail] = useState('');
 
   const handleToneChange = (value: string) => {
     setToneMode(value as 'Coach' | 'Roast');
     localStorage.setItem('echo_tone', value);
   };
+
+  const handleColor1Change = (val: string) => { setColor1(val); localStorage.setItem('echo_color1', val); };
+  const handleColor2Change = (val: string) => { setColor2(val); localStorage.setItem('echo_color2', val); };
 
   const getVibeStrings = (burnPct: number) => {
     if (toneMode === 'Coach') {
@@ -614,7 +619,10 @@ export default function Home() {
               return (
                 <motion.div key="home" custom={direction} variants={tabVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }} className="mx-auto max-w-5xl space-y-5 pb-24">
                   {/* HEADER */}
-                  <div className="bg-[#1d2d2a] rounded-3xl px-6 py-5 flex items-center justify-between">
+                  <div 
+                    className="rounded-3xl px-6 py-5 flex items-center justify-between"
+                    style={{ background: `linear-gradient(135deg, ${color1}, ${color2})` }}
+                  >
                     <div>
                       <p className="text-[11px] font-semibold uppercase tracking-widest text-[#b7e887]/70 mb-0.5">ECHO Dashboard</p>
                       <h1 className="text-2xl font-bold text-white tracking-tight">Hello, {userEmail ? userEmail.split('@')[0] : 'User'} </h1>
@@ -770,7 +778,8 @@ export default function Home() {
                               value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} />
                           )}
                           <button type="submit" disabled={loading}
-                            className="w-full bg-[#1d2d2a] text-[#b7e887] py-3 rounded-xl font-semibold text-sm hover:bg-[#253d38] active:scale-[0.98] transition-all disabled:opacity-50">
+                            style={{ background: `linear-gradient(135deg, ${color1}, ${color2})` }}
+                            className="w-full text-white py-3 rounded-xl font-semibold text-sm hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-sm border border-black/10">
                             {loading ? 'Saving...' : 'Record Transaction'}
                           </button>
                         </form>
@@ -1049,7 +1058,7 @@ export default function Home() {
                       </select>
                     </div>
 
-                    <div className="px-5 py-4 flex items-center justify-between">
+                    <div className="px-5 py-4 flex items-center justify-between border-b border-gray-50">
                       <div>
                         <p className="text-sm font-medium text-[#1d1d1f]">Personality Tone</p>
                         <p className="text-xs text-[#86868b] mt-0.5">Coach (Encouraging) vs Roast (Insulting)</p>
@@ -1067,6 +1076,29 @@ export default function Home() {
                         >
                           Roast
                         </button>
+                      </div>
+                    </div>
+
+                    <div className="px-5 py-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-[#1d1d1f]">Dashboard Theme</p>
+                        <p className="text-xs text-[#86868b] mt-0.5">Customize your main banner gradient</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <input 
+                          type="color" 
+                          value={color1} 
+                          onChange={(e) => handleColor1Change(e.target.value)}
+                          className="h-8 w-12 rounded cursor-pointer border-0 bg-transparent p-0"
+                          title="Primary Color"
+                        />
+                        <input 
+                          type="color" 
+                          value={color2} 
+                          onChange={(e) => handleColor2Change(e.target.value)}
+                          className="h-8 w-12 rounded cursor-pointer border-0 bg-transparent p-0"
+                          title="Secondary Color"
+                        />
                       </div>
                     </div>
                   </div>
