@@ -143,45 +143,44 @@ export default function Home({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* LEFT: QUICK ACTIONS + CHART */}
         <div className="lg:col-span-7 space-y-5">
-          {/* ── Quick Action Triggers ── */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* ── Quick Actions Dock ── */}
+          <div className="flex items-center gap-2 p-2 bg-neutral-900/60 backdrop-blur-xl border border-white/10 rounded-2xl">
             <motion.button
               whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.96 }}
+              whileTap={{ scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               onClick={() => openSheet('expense')}
-              className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5 text-left group hover:border-red-200 hover:shadow-md transition-all"
+              className="flex flex-1 items-center gap-3 rounded-xl px-4 py-3 text-neutral-200 hover:bg-rose-950/30 transition-all group"
             >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 dark:bg-red-900/20 text-red-500 group-hover:scale-110 transition-transform">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-[#1d1d1f] dark:text-neutral-100">Add Expense</p>
-                  <p className="text-[10px] text-[#86868b] dark:text-neutral-400">Log a purchase</p>
-                </div>
+              {/* Arrow Up-Right — Expense out */}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor"
+                className="w-5 h-5 flex-shrink-0 text-rose-400 group-hover:text-rose-300 transition-colors">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+              </svg>
+              <div className="text-left">
+                <p className="text-sm font-semibold leading-tight">Expense</p>
+                <p className="text-[10px] text-neutral-500 font-medium tracking-wide">Outflow</p>
               </div>
             </motion.button>
 
+            {/* Divider */}
+            <div className="h-8 w-px bg-white/10 flex-shrink-0" />
+
             <motion.button
               whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.96 }}
+              whileTap={{ scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               onClick={() => openSheet('allowance')}
-              className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5 text-left group hover:border-emerald-200 hover:shadow-md transition-all"
+              className="flex flex-1 items-center gap-3 rounded-xl px-4 py-3 text-neutral-200 hover:bg-emerald-950/30 transition-all group"
             >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 group-hover:scale-110 transition-transform">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-[#1d1d1f] dark:text-neutral-100">Add Income</p>
-                  <p className="text-[10px] text-[#86868b] dark:text-neutral-400">Record allowance</p>
-                </div>
+              {/* Arrow Down-Left — Income in */}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor"
+                className="w-5 h-5 flex-shrink-0 text-emerald-400 group-hover:text-emerald-300 transition-colors">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 4.5l-15 15m0 0h11.25m-11.25 0V8.25" />
+              </svg>
+              <div className="text-left">
+                <p className="text-sm font-semibold leading-tight">Income</p>
+                <p className="text-[10px] text-neutral-500 font-medium tracking-wide">Inflow</p>
               </div>
             </motion.button>
           </div>
