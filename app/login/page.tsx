@@ -27,7 +27,7 @@ export default function AuthPage() {
 
         try {
             if (isSignUp) {
-                const { error } = await supabase.auth.signUp({
+                const { data, error } = await supabase.auth.signUp({
                     email,
                     password,
                     options: {
@@ -42,8 +42,14 @@ export default function AuthPage() {
                     throw error;
                 }
 
-                // Instead of redirecting, freeze the UI and show the custom message
-                setShowEmailCheck(true);
+                // If signup returns a session (e.g., auto-confirm enabled), trigger the local onboarding view
+                if (data?.session) {
+                    router.push('/');
+                    router.refresh();
+                } else {
+                    // Instead of redirecting, freeze the UI and show the custom message
+                    setShowEmailCheck(true);
+                }
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
