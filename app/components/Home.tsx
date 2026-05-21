@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import NumericKeypadSheet from './NumericKeypadSheet';
+import CustomSelect from './CustomSelect';
 
 export default function Home({
   direction,
@@ -59,6 +60,32 @@ export default function Home({
     animate: { opacity: 1, x: 0 },
     exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -20 : 20 }),
   };
+
+  const typeOptions = [
+    { value: "expense", label: "Expense" },
+    { value: "allowance", label: "Allowance" },
+    { value: "shortage_request", label: "Shortage" },
+    { value: "debt", label: "Debt" },
+  ];
+
+  const categoryOptions = formData.transaction_type === 'allowance' ? [
+    { value: "Regular Weekly Allowance", label: "Regular Weekly Allowance" },
+    { value: "Parents / Family", label: "Parents / Family" },
+    { value: "Scholarship / Stipend", label: "Scholarship / Stipend" },
+    { value: "Other Income", label: "Other Income" },
+    { value: "debt_payment", label: "Pay Back Debt (Bayad Utang)" }
+  ] : formData.transaction_type === 'shortage_request' ? [
+    { value: "Emergency / Shortage", label: "Emergency / Shortage" },
+    { value: "Food Shortage", label: "Food Shortage" },
+    { value: "Transport Shortage", label: "Transport Shortage" }
+  ] : [
+    { value: "Food", label: "Food" },
+    { value: "Transportation", label: "Transportation" },
+    { value: "Education / Supplies", label: "Education / Supplies" },
+    { value: "Entertainment", label: "Entertainment" },
+    { value: "Utilities / Bills", label: "Utilities / Bills" },
+    { value: "Other", label: "Other" }
+  ];
 
   return (
     <>
@@ -149,13 +176,11 @@ export default function Home({
                 value={formData.transaction_date}
                 onChange={(e) => { const d = e.target.value; setFormData({ ...formData, transaction_date: d, allowance_cycle: getAllowanceCycle(d) }); }} />
               <div className="grid grid-cols-2 gap-3">
-                <select className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm bg-white dark:bg-neutral-800 text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
-                  value={formData.transaction_type} onChange={(e) => handleTypeChange(e.target.value)}>
-                  <option value="expense">Expense</option>
-                  <option value="allowance">Allowance</option>
-                  <option value="shortage_request">Shortage</option>
-                  <option value="debt">Debt</option>
-                </select>
+                <CustomSelect
+                  options={typeOptions}
+                  value={formData.transaction_type}
+                  onChange={(e: any) => handleTypeChange(e.target.value)}
+                />
                 <div className="relative flex items-center">
                   {/* Hidden input for form validation */}
                   <input type="text" required readOnly tabIndex={-1} value={formData.amount} className="sr-only" />
@@ -203,27 +228,11 @@ export default function Home({
                   className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
                   value={formData.expense_category} onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })} />
               ) : (
-                <select className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm bg-white dark:bg-neutral-800 text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
-                  value={formData.expense_category} onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })}>
-                  {formData.transaction_type === 'allowance' ? (<>
-                    <option value="Regular Weekly Allowance">Regular Weekly Allowance</option>
-                    <option value="Parents / Family">Parents / Family</option>
-                    <option value="Scholarship / Stipend">Scholarship / Stipend</option>
-                    <option value="Other Income">Other Income</option>
-                    <option value="debt_payment">Pay Back Debt (Bayad Utang)</option>
-                  </>) : formData.transaction_type === 'shortage_request' ? (<>
-                    <option value="Emergency / Shortage">Emergency / Shortage</option>
-                    <option value="Food Shortage">Food Shortage</option>
-                    <option value="Transport Shortage">Transport Shortage</option>
-                  </>) : (<>
-                    <option value="Food">Food</option>
-                    <option value="Transportation">Transportation</option>
-                    <option value="Education / Supplies">Education / Supplies</option>
-                    <option value="Entertainment">Entertainment</option>
-                    <option value="Utilities / Bills">Utilities / Bills</option>
-                    <option value="Other">Other</option>
-                  </>)}
-                </select>
+                <CustomSelect
+                  options={categoryOptions}
+                  value={formData.expense_category}
+                  onChange={(e: any) => setFormData({ ...formData, expense_category: e.target.value })}
+                />
               )}
               {formData.expense_category === 'Other' && (
                 <input type="text" required placeholder="Specify category" maxLength={25}
