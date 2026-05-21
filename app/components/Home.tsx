@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
-import ActionBottomSheet from './ActionBottomSheet';
+import NumericKeypadSheet from './NumericKeypadSheet';
 
 export default function Home({
   direction,
@@ -43,12 +43,7 @@ export default function Home({
   const { title: homeVibeTitle, desc: homeVibeDesc } = getVibeStrings(homeBurnPct);
   const isCritical = netBalance <= 0 || homeBrokeText.includes('Today') || homeBrokeText.includes('Tomorrow');
 
-  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
-
-  const openSheet = (type: string) => {
-    handleTypeChange(type);
-    setIsSheetOpen(true);
-  };
+  const [isKeypadOpen, setIsKeypadOpen] = React.useState(false);
 
   const listContainer: Variants = {
     hidden: {},
@@ -141,57 +136,111 @@ export default function Home({
 
       {/* MAIN CONTENT GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        {/* LEFT: QUICK ACTIONS + CHART */}
+        {/* LEFT: FORM + CHART */}
         <div className="lg:col-span-7 space-y-5">
-          {/* ── Quick Actions Dock ── */}
-          <div className="flex items-center gap-2 p-2 bg-neutral-900/60 backdrop-blur-xl border border-white/10 rounded-2xl">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              onClick={() => openSheet('expense')}
-              className="flex flex-1 items-center gap-3 rounded-xl px-4 py-3 text-neutral-200 hover:bg-rose-950/30 transition-all group"
-            >
-              {/* Arrow Up-Right — Expense out */}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor"
-                className="w-5 h-5 flex-shrink-0 text-rose-400 group-hover:text-rose-300 transition-colors">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-              </svg>
-              <div className="text-left">
-                <p className="text-sm font-semibold leading-tight">Expense</p>
-                <p className="text-[10px] text-neutral-500 font-medium tracking-wide">Outflow</p>
-              </div>
-            </motion.button>
-
-            {/* Divider */}
-            <div className="h-8 w-px bg-white/10 flex-shrink-0" />
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              onClick={() => openSheet('allowance')}
-              className="flex flex-1 items-center gap-3 rounded-xl px-4 py-3 text-neutral-200 hover:bg-emerald-950/30 transition-all group"
-            >
-              {/* Arrow Down-Left — Income in */}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor"
-                className="w-5 h-5 flex-shrink-0 text-emerald-400 group-hover:text-emerald-300 transition-colors">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 4.5l-15 15m0 0h11.25m-11.25 0V8.25" />
-              </svg>
-              <div className="text-left">
-                <p className="text-sm font-semibold leading-tight">Income</p>
-                <p className="text-[10px] text-neutral-500 font-medium tracking-wide">Inflow</p>
-              </div>
-            </motion.button>
-          </div>
-
-          {/* Message toast from last submission */}
-          {message.text && (
-            <div className={`p-3 rounded-xl text-xs text-center font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-              {message.text}
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25, ease: 'easeOut' }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-bold text-[#1d1d1f] dark:text-neutral-100 tracking-tight">Log Transaction</h2>
+              <span className="text-[10px] text-[#86868b] dark:text-neutral-400 bg-[#f5f5f7] dark:bg-neutral-900 rounded-lg px-2 py-1 font-medium">{formData.allowance_cycle}</span>
             </div>
-          )}
-
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <input type="date" required
+                className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                value={formData.transaction_date}
+                onChange={(e) => { const d = e.target.value; setFormData({ ...formData, transaction_date: d, allowance_cycle: getAllowanceCycle(d) }); }} />
+              <div className="grid grid-cols-2 gap-3">
+                <select className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm bg-white dark:bg-neutral-800 text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                  value={formData.transaction_type} onChange={(e) => handleTypeChange(e.target.value)}>
+                  <option value="expense">Expense</option>
+                  <option value="allowance">Allowance</option>
+                  <option value="shortage_request">Shortage</option>
+                  <option value="debt">Debt</option>
+                </select>
+                <div className="relative flex items-center">
+                  {/* Hidden input for form validation */}
+                  <input type="text" required readOnly tabIndex={-1} value={formData.amount} className="sr-only" />
+                  {/* Tappable amount display */}
+                  <button
+                    type="button"
+                    onClick={() => setIsKeypadOpen(true)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm text-left outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all pr-10 flex items-center justify-between"
+                  >
+                    <span className={formData.amount ? 'text-[#1d1d1f] dark:text-neutral-100 font-medium' : 'text-[#86868b]'}>
+                      {formData.amount ? `₱${formData.amount}` : '₱ 0.00'}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    disabled={scanning}
+                    onClick={() => receiptInputRef.current?.click()}
+                    className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#1d2d2a] to-[#2a453e] text-white hover:opacity-90 active:scale-90 transition-all disabled:opacity-40 shadow-sm"
+                    title="Scan receipt"
+                  >
+                    {scanning ? (
+                      <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+                        <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="opacity-75" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                      </svg>
+                    )}
+                  </button>
+                  <input
+                    ref={receiptInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    className="hidden"
+                    onChange={handleReceiptScan}
+                  />
+                </div>
+              </div>
+              {formData.transaction_type === 'debt' ? (
+                <input type="text" required placeholder="Lender (e.g. Juan, Aling Nena)"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                  value={formData.expense_category} onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })} />
+              ) : (
+                <select className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm bg-white dark:bg-neutral-800 text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                  value={formData.expense_category} onChange={(e) => setFormData({ ...formData, expense_category: e.target.value })}>
+                  {formData.transaction_type === 'allowance' ? (<>
+                    <option value="Regular Weekly Allowance">Regular Weekly Allowance</option>
+                    <option value="Parents / Family">Parents / Family</option>
+                    <option value="Scholarship / Stipend">Scholarship / Stipend</option>
+                    <option value="Other Income">Other Income</option>
+                    <option value="debt_payment">Pay Back Debt (Bayad Utang)</option>
+                  </>) : formData.transaction_type === 'shortage_request' ? (<>
+                    <option value="Emergency / Shortage">Emergency / Shortage</option>
+                    <option value="Food Shortage">Food Shortage</option>
+                    <option value="Transport Shortage">Transport Shortage</option>
+                  </>) : (<>
+                    <option value="Food">Food</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="Education / Supplies">Education / Supplies</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Utilities / Bills">Utilities / Bills</option>
+                    <option value="Other">Other</option>
+                  </>)}
+                </select>
+              )}
+              {formData.expense_category === 'Other' && (
+                <input type="text" required placeholder="Specify category" maxLength={25}
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all"
+                  value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} />
+              )}
+              <button type="submit" disabled={loading}
+                className="w-full bg-gradient-to-br from-[#1d2d2a] to-[#2a453e] text-white py-3 rounded-xl font-semibold text-sm hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50">
+                {loading ? 'Saving...' : 'Record Transaction'}
+              </button>
+            </form>
+            {message.text && (
+              <div className={`mt-3 p-3 rounded-xl text-xs text-center font-medium ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                {message.text}
+              </div>
+            )}
+          </motion.div>
           {/* CHART */}
           <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5">
             <h2 className="text-sm font-bold text-[#1d1d1f] dark:text-neutral-100 tracking-tight mb-3">Expense Distribution</h2>
@@ -268,21 +317,13 @@ export default function Home({
       </div>
     </motion.div>
 
-      {/* ── ACTION BOTTOM SHEET ── */}
-      <ActionBottomSheet
-        isOpen={isSheetOpen}
-        onClose={() => setIsSheetOpen(false)}
-        formData={formData}
-        setFormData={setFormData}
-        handleTypeChange={handleTypeChange}
-        handleSubmit={handleSubmit}
-        customCategory={customCategory}
-        setCustomCategory={setCustomCategory}
-        loading={loading}
-        scanning={scanning}
-        receiptInputRef={receiptInputRef}
-        handleReceiptScan={handleReceiptScan}
-        getAllowanceCycle={getAllowanceCycle}
+      {/* ── NUMERIC KEYPAD SHEET ── */}
+      <NumericKeypadSheet
+        isOpen={isKeypadOpen}
+        value={formData.amount}
+        onChange={(val) => setFormData((prev: any) => ({ ...prev, amount: val }))}
+        onClose={() => setIsKeypadOpen(false)}
+        label="Transaction Amount"
       />
     </>
   );
