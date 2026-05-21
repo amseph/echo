@@ -107,11 +107,11 @@ export default function AuthPage() {
         <div className="flex min-h-screen flex-col bg-neutral-950 font-sans antialiased">
 
             {/* ── GRADIENT HEADER ── */}
-            <div className="relative flex flex-col items-center justify-end bg-gradient-to-br from-rose-950 via-purple-950 to-neutral-900 px-6 pt-16 pb-12 text-center">
+            <div className="relative flex flex-col items-center justify-end bg-gradient-to-br from-emerald-950 via-teal-950 to-neutral-950 px-6 pt-28 pb-16 text-center">
                 {/* Logo */}
                 <img
                     src="/icon-512.png"
-                    className="w-16 h-16 mx-auto mb-4 object-contain drop-shadow-lg"
+                    className="w-20 h-20 mx-auto mb-3 object-contain drop-shadow-lg"
                     alt="ECHO Logo"
                 />
 
@@ -132,14 +132,14 @@ export default function AuthPage() {
                 {/* CONDITION 1: Email check / confirmation screen */}
                 {showEmailCheck ? (
                     <div className="flex flex-col items-center text-center py-6">
-                        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50 text-rose-600">
+                        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25H4.5A2.25 2.25 0 0 1 2.25 17.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5H4.5a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                             </svg>
                         </div>
 
                         <p className="text-base font-semibold text-neutral-800">Link sent to</p>
-                        <p className="mt-1 text-sm font-medium text-rose-700 break-all">{email}</p>
+                        <p className="mt-1 text-sm font-medium text-emerald-700 break-all">{email}</p>
                         <p className="mt-3 text-xs text-neutral-400 leading-relaxed max-w-[260px]">
                             Check your inbox and click the link to continue. It may take a minute.
                         </p>
@@ -153,7 +153,7 @@ export default function AuthPage() {
                                 setEmail('');
                                 setPassword('');
                             }}
-                            className="mt-8 w-full rounded-full bg-gradient-to-r from-rose-800 to-purple-900 py-3.5 text-sm font-bold text-white shadow-lg shadow-rose-900/30 transition-all hover:opacity-90 active:scale-[0.98]"
+                            className="mt-8 w-full rounded-full bg-gradient-to-r from-emerald-700 to-teal-800 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-900/30 transition-all hover:opacity-90 active:scale-[0.98]"
                         >
                             Back to Sign In
                         </button>
@@ -181,14 +181,14 @@ export default function AuthPage() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="name@example.com"
-                                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 outline-none transition-all focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
                                 />
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full rounded-full bg-gradient-to-r from-rose-800 to-purple-900 py-3.5 text-sm font-bold text-white shadow-lg shadow-rose-900/30 transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full rounded-full bg-gradient-to-r from-emerald-700 to-teal-800 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-900/30 transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? 'Sending…' : 'Send Reset Link'}
                             </button>
@@ -201,7 +201,7 @@ export default function AuthPage() {
                                     setShowReset(false);
                                     setErrorMsg('');
                                 }}
-                                className="text-xs font-semibold text-neutral-400 hover:text-rose-700 underline underline-offset-2 transition-colors outline-none"
+                                className="text-xs font-semibold text-neutral-400 hover:text-emerald-700 underline underline-offset-2 transition-colors outline-none"
                             >
                                 ← Back to Sign In
                             </button>
@@ -230,7 +230,7 @@ export default function AuthPage() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="name@example.com"
-                                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 outline-none transition-all focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
                                 />
                             </div>
 
@@ -247,7 +247,7 @@ export default function AuthPage() {
                                                 setShowReset(true);
                                                 setErrorMsg('');
                                             }}
-                                            className="text-[11px] font-semibold text-rose-700 hover:underline underline-offset-2 outline-none transition-colors"
+                                            className="text-[11px] font-semibold text-emerald-700 hover:underline underline-offset-2 outline-none transition-colors"
                                         >
                                             Forgot password?
                                         </button>
@@ -260,12 +260,12 @@ export default function AuthPage() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="••••••••"
-                                        className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 pr-11 text-sm text-neutral-900 placeholder-neutral-400 outline-none transition-all focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                                        className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 pr-11 text-sm text-neutral-900 placeholder-neutral-400 outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-rose-700 transition-colors outline-none"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-emerald-700 transition-colors outline-none"
                                         tabIndex={-1}
                                     >
                                         <EyeIcon open={showPassword} />
@@ -276,7 +276,7 @@ export default function AuthPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full rounded-full bg-gradient-to-r from-rose-800 to-purple-900 py-3.5 text-sm font-bold text-white shadow-lg shadow-rose-900/30 transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full rounded-full bg-gradient-to-r from-emerald-700 to-teal-800 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-900/30 transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? 'Processing…' : isSignUp ? 'Create Account' : 'Sign In'}
                             </button>
@@ -291,7 +291,7 @@ export default function AuthPage() {
                                     setIsSignUp(!isSignUp);
                                     setErrorMsg('');
                                 }}
-                                className="font-bold text-rose-700 hover:underline underline-offset-2 outline-none transition-colors"
+                                className="font-bold text-emerald-700 hover:underline underline-offset-2 outline-none transition-colors"
                             >
                                 {isSignUp ? 'Sign In' : 'Create an account'}
                             </button>
