@@ -31,10 +31,16 @@ export default function AuthPage() {
                     email,
                     password,
                     options: {
-                        emailRedirectTo: window.location.origin,
+                        emailRedirectTo: `${window.location.origin}/auth/callback`,
                     },
                 });
-                if (error) throw error;
+                
+                if (error) {
+                    if (error.status === 429 || error.status === 500 || error.message?.toLowerCase().includes('rate limit')) {
+                        throw new Error('Verification email limit reached. Please check your inbox or try again in an hour.');
+                    }
+                    throw error;
+                }
 
                 // Instead of redirecting, freeze the UI and show the custom message
                 setShowEmailCheck(true);
