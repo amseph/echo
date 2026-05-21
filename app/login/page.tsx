@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 
 export default function AuthPage() {
@@ -127,11 +128,18 @@ export default function AuthPage() {
             </div>
 
             {/* ── FORM CARD ── overlaps gradient by pulling up with negative margin */}
-            <div className="relative z-10 -mt-6 flex-1 rounded-t-[2.5rem] bg-white px-6 pt-8 pb-10 shadow-2xl">
-
-                {/* CONDITION 1: Email check / confirmation screen */}
-                {showEmailCheck ? (
-                    <div className="flex flex-col items-center text-center py-6">
+            <div className="relative z-10 -mt-6 flex-1 rounded-t-[2.5rem] bg-white px-6 pt-8 pb-10 shadow-2xl overflow-hidden">
+                <AnimatePresence mode="wait">
+                    {/* CONDITION 1: Email check / confirmation screen */}
+                    {showEmailCheck ? (
+                        <motion.div
+                            key="emailCheck"
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -15 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            className="flex flex-col items-center text-center py-6"
+                        >
                         <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25H4.5A2.25 2.25 0 0 1 2.25 17.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5H4.5a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
@@ -157,12 +165,19 @@ export default function AuthPage() {
                         >
                             Back to Sign In
                         </button>
-                    </div>
+                        </motion.div>
 
-                ) : showReset ? (
+                    ) : showReset ? (
 
-                    /* CONDITION 2: Forgot Password View */
-                    <div className="space-y-5">
+                        /* CONDITION 2: Forgot Password View */
+                        <motion.div
+                            key="reset"
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -15 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            className="space-y-5"
+                        >
                         {errorMsg && (
                             <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-600">
                                 {errorMsg}
@@ -206,12 +221,19 @@ export default function AuthPage() {
                                 ← Back to Sign In
                             </button>
                         </div>
-                    </div>
+                        </motion.div>
 
-                ) : (
+                    ) : (
 
-                    /* CONDITION 3: Normal Login / Signup State Forms */
-                    <div className="space-y-5">
+                        /* CONDITION 3: Normal Login / Signup State Forms */
+                        <motion.div
+                            key={isSignUp ? 'signup' : 'login'}
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -15 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            className="space-y-5"
+                        >
                         {errorMsg && (
                             <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-600">
                                 {errorMsg}
@@ -296,8 +318,9 @@ export default function AuthPage() {
                                 {isSignUp ? 'Sign In' : 'Create an account'}
                             </button>
                         </div>
-                    </div>
-                )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
