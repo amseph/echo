@@ -1,4 +1,66 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+
+const CustomSelect = ({ value, onChange, options }: any) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find((opt: any) => opt.value === value) || options[0];
+
+  return (
+    <div className="relative w-full" ref={containerRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex w-full items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+      >
+        <span>{selectedOption ? selectedOption.label : ''}</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className={`h-4 w-4 text-neutral-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+      </button>
+
+      {/* Floating Menu Card */}
+      <div
+        className={`absolute z-50 mt-2 w-full overflow-hidden rounded-2xl bg-white shadow-xl border border-neutral-100 transition-all duration-200 ease-out origin-top ${
+          isOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="py-2">
+          {options.map((opt: any) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => {
+                onChange({ target: { value: opt.value } });
+                setIsOpen(false);
+              }}
+              className="flex w-full items-center px-4 py-3 text-sm text-neutral-700 transition-colors hover:bg-emerald-50 hover:text-emerald-900 text-left"
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function Login({
   handleInitializeCycle,
@@ -9,6 +71,19 @@ export default function Login({
   initialCategory,
   setInitialCategory
 }: any) {
+  const cycleOptions = [
+    { value: 'weekly', label: 'Weekly (Resets Mondays)' },
+    { value: 'semi-monthly', label: 'Semi-Monthly (1st & 15th)' },
+    { value: 'monthly', label: 'Monthly (Calendar Month)' }
+  ];
+
+  const categoryOptions = [
+    { value: 'Regular Weekly Allowance', label: 'Regular Weekly Allowance' },
+    { value: 'Parents / Family', label: 'Parents / Family' },
+    { value: 'Scholarship / Stipend', label: 'Scholarship / Stipend' },
+    { value: 'Other Income', label: 'Other Income' }
+  ];
+
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-neutral-950 font-sans antialiased animate-fadeIn">
       {/* ── GRADIENT HEADER ── */}
@@ -30,15 +105,11 @@ export default function Login({
           <form onSubmit={handleInitializeCycle} className="space-y-5">
             <div className="text-left">
               <label className="block text-[11px] font-semibold uppercase tracking-widest text-neutral-400 mb-2 pl-1">Budget Cycle</label>
-              <select
+              <CustomSelect
                 value={cycleType}
-                onChange={(e) => setCycleType(e.target.value)}
-                className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
-              >
-                <option value="weekly">Weekly (Resets Mondays)</option>
-                <option value="semi-monthly">Semi-Monthly (1st &amp; 15th)</option>
-                <option value="monthly">Monthly (Calendar Month)</option>
-              </select>
+                onChange={(e: any) => setCycleType(e.target.value)}
+                options={cycleOptions}
+              />
             </div>
 
             <div className="text-left">
@@ -56,16 +127,11 @@ export default function Login({
 
             <div className="text-left">
               <label className="block text-[11px] font-semibold uppercase tracking-widest text-neutral-400 mb-2 pl-1">Category</label>
-              <select
+              <CustomSelect
                 value={initialCategory}
-                onChange={(e) => setInitialCategory(e.target.value)}
-                className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
-              >
-                <option value="Regular Weekly Allowance">Regular Weekly Allowance</option>
-                <option value="Parents / Family">Parents / Family</option>
-                <option value="Scholarship / Stipend">Scholarship / Stipend</option>
-                <option value="Other Income">Other Income</option>
-              </select>
+                onChange={(e: any) => setInitialCategory(e.target.value)}
+                options={categoryOptions}
+              />
             </div>
 
             <button
