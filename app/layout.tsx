@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ECHO",
   description: "Expense & Cashflow Habit Observer",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
