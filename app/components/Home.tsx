@@ -153,9 +153,9 @@ export default function Home({
                   <option value="debt">Debt</option>
                 </select>
                 <div className="relative flex items-center">
-                  <input type="number" step="0.01" required placeholder="₱ 0.00"
+                  <input type="text" inputMode="decimal" pattern="[0-9]*" required placeholder="₱ 0.00"
                     className="w-full px-4 py-2.5 rounded-xl border border-[#d2d2d7] dark:border-neutral-600 text-sm text-[#1d1d1f] dark:text-neutral-100 outline-none focus:border-[#1d2d2a] focus:ring-1 focus:ring-[#1d2d2a] transition-all pr-10"
-                    value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
+                    value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value.replace(/[^0-9.]/g, '') })} />
                   <button
                     type="button"
                     disabled={scanning}

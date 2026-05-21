@@ -115,12 +115,13 @@ export default function Login({
             <div className="text-left">
               <label className="block text-[11px] font-semibold uppercase tracking-widest text-neutral-400 mb-2 pl-1">Starting Amount (₱)</label>
               <input
-                type="number"
+                type="text"
+                inputMode="decimal"
+                pattern="[0-9]*"
                 required
-                min="1"
                 placeholder="0.00"
                 value={initialAllowance}
-                onChange={(e) => setInitialAllowance(e.target.value)}
+                onChange={(e) => setInitialAllowance(e.target.value.replace(/[^0-9.]/g, ''))}
                 className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
               />
             </div>
