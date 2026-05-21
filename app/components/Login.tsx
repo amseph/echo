@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import NumericKeypadSheet from './NumericKeypadSheet';
 
 const CustomSelect = ({ value, onChange, options }: any) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,6 +72,8 @@ export default function Login({
   initialCategory,
   setInitialCategory
 }: any) {
+  const [isKeypadOpen, setIsKeypadOpen] = useState(false);
+
   const cycleOptions = [
     { value: 'weekly', label: 'Weekly (Resets Mondays)' },
     { value: 'semi-monthly', label: 'Semi-Monthly (1st & 15th)' },
@@ -114,16 +117,28 @@ export default function Login({
 
             <div className="text-left">
               <label className="block text-[11px] font-semibold uppercase tracking-widest text-neutral-400 mb-2 pl-1">Starting Amount (₱)</label>
+              {/* Hidden input for form validation */}
               <input
                 type="text"
-                inputMode="decimal"
-                pattern="[0-9]*"
                 required
-                placeholder="0.00"
+                readOnly
+                tabIndex={-1}
                 value={initialAllowance}
-                onChange={(e) => setInitialAllowance(e.target.value.replace(/[^0-9.]/g, ''))}
-                className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                className="sr-only"
               />
+              {/* Tappable display — opens the keypad sheet */}
+              <button
+                type="button"
+                onClick={() => setIsKeypadOpen(true)}
+                className="flex w-full items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+              >
+                <span className={initialAllowance ? 'text-neutral-900 font-medium' : 'text-neutral-400'}>
+                  {initialAllowance ? `₱${initialAllowance}` : '₱ 0.00'}
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 text-neutral-400">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.598 4.5 4.698V18a2.25 2.25 0 0 0 2.25 2.25h10.5A2.25 2.25 0 0 0 19.5 18V4.698c0-1.1-.807-1.998-1.907-2.126A48.507 48.507 0 0 0 12 2.25Z" />
+                </svg>
+              </button>
             </div>
 
             <div className="text-left">
@@ -144,6 +159,15 @@ export default function Login({
           </form>
         </div>
       </div>
+
+      {/* ── NUMERIC KEYPAD SHEET ── */}
+      <NumericKeypadSheet
+        isOpen={isKeypadOpen}
+        value={initialAllowance}
+        onChange={setInitialAllowance}
+        onClose={() => setIsKeypadOpen(false)}
+        label="Starting Amount"
+      />
     </div>
   );
 }
