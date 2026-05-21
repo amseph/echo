@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, Variants, AnimatePresence } from 'framer-motion';
+import CustomSelect from './CustomSelect';
 
 export const ECHO_FAQS = [
   { question: "What is the \"Predicted Broke Date\" or \"Runway\"?", answer: "It calculates exactly how many days your remaining allowance will last based on your real spending velocity over the past 7 days. If you haven't spent anything, it defaults to an \"Infinite Runway.\"" },
@@ -52,15 +53,15 @@ export default function Settings({
             <p className="text-sm font-medium text-[#1d1d1f] dark:text-neutral-100">Allowance Cycle</p>
             <p className="text-xs text-[#86868b] dark:text-neutral-400 mt-0.5">Controls how your metrics reset</p>
           </div>
-          <select
+          <CustomSelect
             value={cyclePreference}
-            onChange={(e) => handleCycleChange(e.target.value)}
-            className="rounded-lg border border-[#d2d2d7] dark:border-neutral-600 bg-[#f5f5f7] dark:bg-neutral-900 px-3 py-1.5 text-xs font-medium text-[#1d1d1f] dark:text-neutral-100 outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
-          >
-            <option value="Weekly">Weekly</option>
-            <option value="Semi-Monthly">Semi-Monthly</option>
-            <option value="Monthly">Monthly</option>
-          </select>
+            onChange={(e: any) => handleCycleChange(e.target.value)}
+            options={[
+              { value: 'Weekly', label: 'Weekly' },
+              { value: 'Semi-Monthly', label: 'Semi-Monthly' },
+              { value: 'Monthly', label: 'Monthly' },
+            ]}
+          />
         </div>
 
         <div className="px-5 py-4 flex items-center justify-between border-b border-gray-50 dark:border-neutral-700">

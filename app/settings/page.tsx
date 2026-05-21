@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import CustomSelect from '@/app/components/CustomSelect';
 
 const CYCLE_KEY = 'echo_allowance_cycle';
 
@@ -92,15 +93,15 @@ export default function SettingsPage() {
 
           <div>
             <label className="block text-xs font-medium text-[#86868b] mb-1.5 pl-1">Cycle Period</label>
-            <select
+            <CustomSelect
               value={cyclePreference}
-              onChange={(e) => setCyclePreference(e.target.value)}
-              className="w-full rounded-xl border border-[#d2d2d7] bg-[#f5f5f7] px-4 py-3 text-sm text-[#1d1d1f] outline-none transition-all focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3]"
-            >
-              <option value="weekly">Weekly</option>
-              <option value="semi-monthly">Semi-Monthly (1st &amp; 15th)</option>
-              <option value="monthly">Monthly (Default)</option>
-            </select>
+              onChange={(e: any) => setCyclePreference(e.target.value)}
+              options={[
+                { value: 'weekly', label: 'Weekly' },
+                { value: 'semi-monthly', label: 'Semi-Monthly (1st & 15th)' },
+                { value: 'monthly', label: 'Monthly (Default)' },
+              ]}
+            />
           </div>
 
           <button
