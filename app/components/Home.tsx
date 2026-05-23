@@ -283,34 +283,87 @@ export default function Home({
             )}
           </div>
         </div>
-        {/* RIGHT: LEDGER */}
-        <div className="lg:col-span-5 bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5 max-h-[640px] overflow-y-auto">
-          <h2 className="text-sm font-bold text-[#1d1d1f] dark:text-white tracking-tight mb-3 sticky top-0 bg-white dark:bg-neutral-800 pb-2 border-b border-gray-100 dark:border-neutral-700">Transaction History</h2>
-          {transactions.length === 0 ? (
-            <p className="text-xs text-gray-400 dark:text-neutral-400 text-center py-10">No transactions yet.</p>
-          ) : (
-            <motion.div className="space-y-1" variants={listContainer} initial="hidden" animate="visible">
-              <AnimatePresence>
-                {transactions.map((tx: any) => {
-                  const isInflow = tx.transaction_type === 'allowance' || tx.transaction_type === 'shortage_request' || tx.transaction_type === 'debt';
-                  const isDebtPay = tx.transaction_type === 'debt_payment';
-                  const isDebt = tx.transaction_type === 'debt';
-                  const isPaid = tx.is_paid;
-                  return (
-                    <motion.div 
-                      key={tx.id} 
-                      variants={listItem} 
-                      exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }} 
-                      className={`flex items-center justify-between py-2.5 border-b border-gray-50 dark:border-neutral-700 last:border-0 group transition-all duration-200 ${isPaid ? 'opacity-55' : ''}`}
-                    >
-                      <div className="flex items-center min-w-0 flex-1">
-                        {isDebt && (
+        {/* RIGHT: LEDGERS */}
+        <div className="lg:col-span-5 flex flex-col gap-5">
+          {/* TRANSACTION HISTORY */}
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-5 max-h-[500px] overflow-y-auto">
+            <h2 className="text-sm font-bold text-[#1d1d1f] dark:text-white tracking-tight mb-3 sticky top-0 bg-white dark:bg-neutral-800 pb-2 border-b border-gray-100 dark:border-neutral-700">Transaction History</h2>
+            {transactions.filter((t: any) => t.transaction_type !== 'debt').length === 0 ? (
+              <p className="text-xs text-gray-400 dark:text-neutral-400 text-center py-10">No transactions yet.</p>
+            ) : (
+              <motion.div className="space-y-1" variants={listContainer} initial="hidden" animate="visible">
+                <AnimatePresence>
+                  {transactions.filter((t: any) => t.transaction_type !== 'debt').map((tx: any) => {
+                    const isInflow = tx.transaction_type === 'allowance' || tx.transaction_type === 'shortage_request';
+                    const isDebtPay = tx.transaction_type === 'debt_payment';
+                    return (
+                      <motion.div 
+                        key={tx.id} 
+                        variants={listItem} 
+                        exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }} 
+                        className="flex items-center justify-between py-2.5 border-b border-gray-50 dark:border-neutral-700 last:border-0 group transition-all duration-200"
+                      >
+                        <div className="flex items-center min-w-0 flex-1">
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium text-sm text-[#1d1d1f] dark:text-neutral-100 truncate">
+                              {isDebtPay ? 'Paid Back Loan (Soli)' : tx.expense_category}
+                            </p>
+                            <p className="text-[10px] text-[#86868b] dark:text-neutral-400">
+                              {tx.transaction_date} · {tx.allowance_cycle}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 ml-3 flex-shrink-0">
+                          <div className="text-right">
+                            <p className={`font-bold text-sm ${isInflow ? 'text-green-600 dark:text-emerald-400' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
+                              {isDebtPay ? `−₱${parseFloat(tx.amount).toFixed(2)}` : `${isInflow ? '+' : '−'}₱${parseFloat(tx.amount).toFixed(2)}`}
+                            </p>
+                            <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b] dark:text-neutral-400">
+                              {isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}
+                            </p>
+                          </div>
+                          <button 
+                            onClick={() => handleDeleteTransaction(tx.id)}
+                            className="p-1.5 text-[#d2d2d7] hover:text-red-500 hover:bg-red-50 active:scale-95 rounded-lg transition-all"
+                            title="Delete transaction"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                          </button>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </div>
+
+          {/* DEBT TRACKER */}
+          <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-2xl border border-amber-100 dark:border-amber-900/50 shadow-sm p-5 max-h-[400px] overflow-y-auto">
+            <h2 className="text-sm font-bold text-amber-800 dark:text-amber-500 tracking-tight mb-3 sticky top-0 bg-amber-50/50 dark:bg-amber-950/20 pb-2 border-b border-amber-100 dark:border-amber-900/50 backdrop-blur-md">Debt Tracker</h2>
+            {transactions.filter((t: any) => t.transaction_type === 'debt').length === 0 ? (
+              <p className="text-xs text-amber-600/60 dark:text-amber-500/60 text-center py-6">No debts logged.</p>
+            ) : (
+              <motion.div className="space-y-1" variants={listContainer} initial="hidden" animate="visible">
+                <AnimatePresence>
+                  {transactions.filter((t: any) => t.transaction_type === 'debt').map((tx: any) => {
+                    const isPaid = tx.is_paid;
+                    return (
+                      <motion.div 
+                        key={tx.id} 
+                        variants={listItem} 
+                        exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }} 
+                        className={`flex items-center justify-between py-2.5 border-b border-amber-100/50 dark:border-amber-900/30 last:border-0 group transition-all duration-200 ${isPaid ? 'opacity-55' : ''}`}
+                      >
+                        <div className="flex items-center min-w-0 flex-1">
                           <button
                             onClick={() => handleToggleDebtPaid(tx.id, !isPaid)}
                             className={`mr-2.5 flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full border transition-all active:scale-95 ${
                               isPaid
                                 ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm shadow-emerald-500/20'
-                                : 'border-neutral-300 dark:border-neutral-600 hover:border-emerald-500 hover:bg-emerald-50/20 text-transparent hover:text-emerald-500/40'
+                                : 'border-amber-300 dark:border-amber-700 hover:border-emerald-500 hover:bg-emerald-50/20 text-transparent hover:text-emerald-500/40'
                             }`}
                             title={isPaid ? "Mark as Unpaid" : "Mark as Paid"}
                           >
@@ -318,41 +371,41 @@ export default function Home({
                               <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                             </svg>
                           </button>
-                        )}
-                        <div className="min-w-0 flex-1">
-                          <p className={`font-medium text-sm truncate ${isPaid ? 'line-through text-neutral-400 dark:text-neutral-500' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
-                            {isDebtPay ? 'Paid Back Loan (Soli)' : tx.expense_category}
-                          </p>
-                          <p className={`text-[10px] ${isPaid ? 'text-neutral-400 dark:text-neutral-500' : 'text-[#86868b] dark:text-neutral-400'}`}>
-                            {tx.transaction_date} · {tx.allowance_cycle}
-                          </p>
+                          <div className="min-w-0 flex-1">
+                            <p className={`font-medium text-sm truncate ${isPaid ? 'line-through text-amber-800/50 dark:text-amber-500/50' : 'text-amber-900 dark:text-amber-400'}`}>
+                              {tx.expense_category}
+                            </p>
+                            <p className={`text-[10px] ${isPaid ? 'text-amber-800/40 dark:text-amber-500/40' : 'text-amber-700/70 dark:text-amber-500/70'}`}>
+                              {tx.transaction_date}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-3 ml-3 flex-shrink-0">
-                        <div className="text-right">
-                          <p className={`font-bold text-sm ${isPaid ? 'line-through text-neutral-400 dark:text-neutral-500' : isInflow ? 'text-green-600 dark:text-emerald-400' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
-                            {isDebtPay ? `−₱${parseFloat(tx.amount).toFixed(2)}` : `${isInflow ? '+' : '−'}₱${parseFloat(tx.amount).toFixed(2)}`}
-                          </p>
-                          <p className={`text-[10px] uppercase font-bold tracking-wider ${isPaid ? 'text-neutral-400 dark:text-neutral-500' : 'text-[#86868b] dark:text-neutral-400'}`}>
-                            {isDebt ? (isPaid ? 'Paid Debt' : 'Debt') : isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}
-                          </p>
+                        <div className="flex items-center gap-3 ml-3 flex-shrink-0">
+                          <div className="text-right">
+                            <p className={`font-bold text-sm ${isPaid ? 'line-through text-amber-800/50 dark:text-amber-500/50' : 'text-amber-700 dark:text-amber-500'}`}>
+                              +₱{parseFloat(tx.amount).toFixed(2)}
+                            </p>
+                            <p className={`text-[10px] uppercase font-bold tracking-wider ${isPaid ? 'text-amber-800/40 dark:text-amber-500/40' : 'text-amber-600/70 dark:text-amber-500/70'}`}>
+                              {isPaid ? 'Paid Debt' : 'Owed'}
+                            </p>
+                          </div>
+                          <button 
+                            onClick={() => handleDeleteTransaction(tx.id)}
+                            className="p-1.5 text-amber-300 dark:text-amber-800 hover:text-red-500 hover:bg-red-50 active:scale-95 rounded-lg transition-all"
+                            title="Delete debt"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                          </button>
                         </div>
-                        <button 
-                          onClick={() => handleDeleteTransaction(tx.id)}
-                          className="p-1.5 text-[#d2d2d7] hover:text-red-500 hover:bg-red-50 active:scale-95 rounded-lg transition-all"
-                          title="Delete transaction"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                          </svg>
-                        </button>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-            </motion.div>
-          )}
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
