@@ -118,7 +118,7 @@ export default function DashboardLayout({
       </main>
 
       {/* MOBILE BOTTOM NAVIGATION BAR */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-neutral-950/90 backdrop-blur-lg border-t border-neutral-800 pb-safe shadow-[0_-8px_30px_rgb(0,0,0,0.4)]">
+      <div className="mobile-nav-bar md:hidden fixed bottom-0 left-0 right-0 z-50 bg-neutral-950/90 backdrop-blur-lg border-t border-neutral-800 pb-safe shadow-[0_-8px_30px_rgb(0,0,0,0.4)]">
         <div className="flex justify-around items-center px-6 py-2.5">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;

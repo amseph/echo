@@ -49,6 +49,18 @@ export default function NumericKeypadSheet({
     return () => document.removeEventListener('keydown', onEsc);
   }, [isOpen, onClose]);
 
+  // Manage body class for keypad visibility
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('keypad-open');
+    } else {
+      document.body.classList.remove('keypad-open');
+    }
+    return () => {
+      document.body.classList.remove('keypad-open');
+    };
+  }, [isOpen]);
+
   const displayValue = value === '' ? '0.00' : value;
 
   return (
