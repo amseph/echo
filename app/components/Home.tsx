@@ -7,6 +7,8 @@ import CustomSelect from './CustomSelect';
 export default function Home({
   direction,
   userEmail,
+  isKeypadOpen,
+  setIsKeypadOpen,
   handleTabChange,
   handleSignOut,
   totalAllowance,
@@ -45,7 +47,7 @@ export default function Home({
   const { title: homeVibeTitle, desc: homeVibeDesc } = getVibeStrings(homeBurnPct);
   const isCritical = netBalance <= 0 || homeBrokeText.includes('Today') || homeBrokeText.includes('Tomorrow');
 
-  const [isKeypadOpen, setIsKeypadOpen] = React.useState(false);
+
 
   const listContainer: Variants = {
     hidden: {},

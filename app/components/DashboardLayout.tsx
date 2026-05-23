@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 interface DashboardLayoutProps {
   activeTab: 'home' | 'analytics' | 'settings';
   handleTabChange: (tab: 'home' | 'analytics' | 'settings') => void;
+  isKeypadOpen?: boolean;
   children: React.ReactNode;
 }
 
 export default function DashboardLayout({
   activeTab,
   handleTabChange,
+  isKeypadOpen,
   children,
 }: DashboardLayoutProps) {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -118,31 +120,33 @@ export default function DashboardLayout({
       </main>
 
       {/* MOBILE BOTTOM NAVIGATION BAR */}
-      <div className="mobile-nav-bar md:hidden fixed bottom-0 left-0 right-0 z-50 bg-neutral-950/90 backdrop-blur-lg border-t border-neutral-800 pb-safe shadow-[0_-8px_30px_rgb(0,0,0,0.4)]">
-        <div className="flex justify-around items-center px-6 py-2.5">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => handleTabChange(tab.id as 'home' | 'analytics' | 'settings')}
-                className={`flex flex-col items-center gap-1 transition-colors px-4 py-1.5 rounded-2xl ${
-                  isActive
-                    ? 'text-emerald-400'
-                    : 'text-neutral-500 hover:text-neutral-300'
-                }`}
-              >
-                <div className={`${isActive ? 'scale-110' : 'scale-100'} transition-transform duration-200`}>
-                  {tab.icon}
-                </div>
-                <span className="text-[10px] font-medium tracking-wide">
-                  {tab.label}
-                </span>
-              </button>
-            );
-          })}
+      {!isKeypadOpen && (
+        <div className="mobile-nav-bar md:hidden fixed bottom-0 left-0 right-0 z-50 bg-neutral-950/90 backdrop-blur-lg border-t border-neutral-800 pb-safe shadow-[0_-8px_30px_rgb(0,0,0,0.4)]">
+          <div className="flex justify-around items-center px-6 py-2.5">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabChange(tab.id as 'home' | 'analytics' | 'settings')}
+                  className={`flex flex-col items-center gap-1 transition-colors px-4 py-1.5 rounded-2xl ${
+                    isActive
+                      ? 'text-emerald-400'
+                      : 'text-neutral-500 hover:text-neutral-300'
+                  }`}
+                >
+                  <div className={`${isActive ? 'scale-110' : 'scale-100'} transition-transform duration-200`}>
+                    {tab.icon}
+                  </div>
+                  <span className="text-[10px] font-medium tracking-wide">
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

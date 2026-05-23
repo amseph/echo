@@ -37,6 +37,7 @@ export default function Home() {
   const [cycleType, setCycleType] = useState('monthly');
   const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'settings'>('home');
   const [direction, setDirection] = useState(0);
+  const [isKeypadOpen, setIsKeypadOpen] = useState(false);
 
   const handleTabChange = (newTab: 'home' | 'analytics' | 'settings') => {
     const tabs = ['home', 'analytics', 'settings'];
@@ -560,12 +561,14 @@ export default function Home() {
         />
       ) : (
         /* Case 3: Redesigned dashboard */
-        <DashboardLayout activeTab={activeTab} handleTabChange={handleTabChange}>
+        <DashboardLayout activeTab={activeTab} handleTabChange={handleTabChange} isKeypadOpen={isKeypadOpen}>
           <AnimatePresence mode="wait" custom={direction}>
             {activeTab === 'home' && (
               <HomeView
                 direction={direction}
                 userEmail={userEmail}
+                isKeypadOpen={isKeypadOpen}
+                setIsKeypadOpen={setIsKeypadOpen}
                 handleTabChange={handleTabChange}
                 handleSignOut={handleSignOut}
                 totalAllowance={totalAllowance}
