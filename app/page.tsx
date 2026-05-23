@@ -29,6 +29,7 @@ const getAllowanceCycle = (dateString: string): string => {
 export default function Home() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [initialAllowance, setInitialAllowance] = useState('');
   const [initialCategory, setInitialCategory] = useState('Parents / Family');
@@ -197,7 +198,7 @@ export default function Home() {
 
       const todayDate = new Date().toISOString().split('T')[0];
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('transactions')
         .insert([
           {
@@ -208,13 +209,18 @@ export default function Home() {
             transaction_date: todayDate,
             allowance_cycle: getAllowanceCycle(todayDate),
           }
-        ]);
+        ])
+        .select()
+        .single();
 
       if (!error) {
         setInitialAllowance('');
         setInitialCategory('Parents / Family');
         localStorage.setItem('echo_allowance_cycle', cycleType);
-        await fetchTransactions();
+        if (data) {
+          setTransactions([data]);
+        }
+        setLoading(false);
       } else {
         setLoading(false);
       }
@@ -320,7 +326,7 @@ export default function Home() {
       return;
     }
 
-    setLoading(true);
+    setSubmitting(true);
     setMessage({ type: '', text: '' });
 
     try {
@@ -331,29 +337,33 @@ export default function Home() {
       if (transactionType === 'debt_payment') {
         if (parseFloat(amount) > totalDebt) {
           showToast(`Validation Error: You cannot pay back more than your current total debt of ₱${totalDebt.toFixed(2)}.`, 'error');
-          setLoading(false);
+          setSubmitting(false);
           return; // Kill execution early
         }
 
         if (parseFloat(amount) > netBalance) {
           showToast(`Validation Error: Insufficient funds. Your current net balance is ₱${netBalance.toFixed(2)}, you cannot afford this payment.`, 'error');
-          setLoading(false);
+          setSubmitting(false);
           return; // Kill execution early
         }
       }
 
       const { data: { user } } = await supabase.auth.getUser();
 
-      const { error } = await supabase.from('transactions').insert([
-        {
-          user_id: user?.id,
-          transaction_date: formData.transaction_date,
-          transaction_type: transactionType,
-          amount: Number(amount),
-          expense_category: categoryToSend,
-          allowance_cycle: formData.allowance_cycle,
-        },
-      ]);
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert([
+          {
+            user_id: user?.id,
+            transaction_date: formData.transaction_date,
+            transaction_type: transactionType,
+            amount: Number(amount),
+            expense_category: categoryToSend,
+            allowance_cycle: formData.allowance_cycle,
+          },
+        ])
+        .select()
+        .single();
 
       if (error) throw error;
 
@@ -362,11 +372,13 @@ export default function Home() {
       // Reset amount and customCategory but preserve type, category, and cycle for rapid entry
       setFormData(prev => ({ ...prev, amount: '' }));
       setCustomCategory('');
-      fetchTransactions();
+      if (data) {
+        setTransactions(prev => [data, ...prev]);
+      }
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message || 'Something went wrong.' });
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -550,7 +562,7 @@ export default function Home() {
                 handleSubmit={handleSubmit}
                 customCategory={customCategory}
                 setCustomCategory={setCustomCategory}
-                loading={loading}
+                loading={submitting}
                 scanning={scanning}
                 receiptInputRef={receiptInputRef}
                 handleReceiptScan={handleReceiptScan}
