@@ -58,7 +58,7 @@ export default function NumericKeypadSheet({
           {/* ── BACKDROP ── */}
           <motion.div
             key="backdrop"
-            className="fixed inset-0 z-40 backdrop-blur-sm bg-black/40"
+            className="fixed inset-0 z-[60] backdrop-blur-sm bg-black/40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -69,7 +69,7 @@ export default function NumericKeypadSheet({
           {/* ── BOTTOM SHEET ── */}
           <motion.div
             key="sheet"
-            className="fixed inset-x-0 bottom-0 z-50 bg-neutral-950 border-t border-emerald-900/40 rounded-t-[2.5rem] shadow-2xl"
+            className="fixed inset-x-0 bottom-0 z-[70] bg-neutral-950 border-t border-emerald-900/40 rounded-t-[2.5rem] shadow-2xl"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
