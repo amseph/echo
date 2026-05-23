@@ -165,6 +165,26 @@ export default function Home() {
     }
   };
 
+  const handleToggleDebtPaid = async (id: number, isPaid: boolean) => {
+    try {
+      setTransactions(prev => prev.map(t => t.id === id ? { ...t, is_paid: isPaid } : t));
+      const { error } = await supabase
+        .from('transactions')
+        .update({ is_paid: isPaid })
+        .eq('id', id);
+
+      if (error) {
+        setTransactions(prev => prev.map(t => t.id === id ? { ...t, is_paid: !isPaid } : t));
+        showToast('Error updating status: ' + error.message, 'error');
+      } else {
+        showToast(isPaid ? 'Debt marked as paid!' : 'Debt marked as unpaid.', 'success');
+      }
+    } catch (error: any) {
+      setTransactions(prev => prev.map(t => t.id === id ? { ...t, is_paid: !isPaid } : t));
+      showToast('Error updating status: ' + error.message, 'error');
+    }
+  };
+
   const handleResetLedger = async () => {
     if (!window.confirm('Are you sure you want to completely wipe your ledger? This cannot be undone.')) return;
     setLoading(true);
@@ -298,7 +318,7 @@ export default function Home() {
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
   const totalDebt = transactions
-    .filter((t) => t.transaction_type === 'debt')
+    .filter((t) => t.transaction_type === 'debt' && !t.is_paid)
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
   const netBalance = totalAllowance + totalShortages + totalDebt - totalExpenses;
@@ -555,6 +575,7 @@ export default function Home() {
                 daysRemaining={daysRemaining}
                 transactions={transactions}
                 handleDeleteTransaction={handleDeleteTransaction}
+                handleToggleDebtPaid={handleToggleDebtPaid}
                 theme={theme}
                 formData={formData}
                 setFormData={setFormData}

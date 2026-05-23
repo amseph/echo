@@ -17,6 +17,7 @@ export default function Home({
   daysRemaining,
   transactions,
   handleDeleteTransaction,
+  handleToggleDebtPaid,
   theme,
   formData,
   setFormData,
@@ -293,18 +294,48 @@ export default function Home({
                 {transactions.map((tx: any) => {
                   const isInflow = tx.transaction_type === 'allowance' || tx.transaction_type === 'shortage_request' || tx.transaction_type === 'debt';
                   const isDebtPay = tx.transaction_type === 'debt_payment';
+                  const isDebt = tx.transaction_type === 'debt';
+                  const isPaid = tx.is_paid;
                   return (
-                    <motion.div key={tx.id} variants={listItem} exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }} className="flex items-center justify-between py-2.5 border-b border-gray-50 dark:border-neutral-700 last:border-0 group">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-sm text-[#1d1d1f] dark:text-neutral-100 truncate">{isDebtPay ? 'Paid Back Loan (Soli)' : tx.expense_category}</p>
-                        <p className="text-[10px] text-[#86868b] dark:text-neutral-400">{tx.transaction_date} · {tx.allowance_cycle}</p>
+                    <motion.div 
+                      key={tx.id} 
+                      variants={listItem} 
+                      exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }} 
+                      className={`flex items-center justify-between py-2.5 border-b border-gray-50 dark:border-neutral-700 last:border-0 group transition-all duration-200 ${isPaid ? 'opacity-55' : ''}`}
+                    >
+                      <div className="flex items-center min-w-0 flex-1">
+                        {isDebt && (
+                          <button
+                            onClick={() => handleToggleDebtPaid(tx.id, !isPaid)}
+                            className={`mr-2.5 flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full border transition-all active:scale-95 ${
+                              isPaid
+                                ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm shadow-emerald-500/20'
+                                : 'border-neutral-300 dark:border-neutral-600 hover:border-emerald-500 hover:bg-emerald-50/20 text-transparent hover:text-emerald-500/40'
+                            }`}
+                            title={isPaid ? "Mark as Unpaid" : "Mark as Paid"}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3.5} stroke="currentColor" className="w-3 h-3">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                          </button>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <p className={`font-medium text-sm truncate ${isPaid ? 'line-through text-neutral-400 dark:text-neutral-500' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
+                            {isDebtPay ? 'Paid Back Loan (Soli)' : tx.expense_category}
+                          </p>
+                          <p className={`text-[10px] ${isPaid ? 'text-neutral-400 dark:text-neutral-500' : 'text-[#86868b] dark:text-neutral-400'}`}>
+                            {tx.transaction_date} · {tx.allowance_cycle}
+                          </p>
+                        </div>
                       </div>
                       <div className="flex items-center gap-3 ml-3 flex-shrink-0">
                         <div className="text-right">
-                          <p className={`font-bold text-sm ${isInflow ? 'text-green-600 dark:text-emerald-400' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
+                          <p className={`font-bold text-sm ${isPaid ? 'line-through text-neutral-400 dark:text-neutral-500' : isInflow ? 'text-green-600 dark:text-emerald-400' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
                             {isDebtPay ? `−₱${parseFloat(tx.amount).toFixed(2)}` : `${isInflow ? '+' : '−'}₱${parseFloat(tx.amount).toFixed(2)}`}
                           </p>
-                          <p className="text-[10px] uppercase font-bold tracking-wider text-[#86868b] dark:text-neutral-400">{isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}</p>
+                          <p className={`text-[10px] uppercase font-bold tracking-wider ${isPaid ? 'text-neutral-400 dark:text-neutral-500' : 'text-[#86868b] dark:text-neutral-400'}`}>
+                            {isDebt ? (isPaid ? 'Paid Debt' : 'Debt') : isDebtPay ? 'Settlement' : tx.transaction_type.replace('_', ' ')}
+                          </p>
                         </div>
                         <button 
                           onClick={() => handleDeleteTransaction(tx.id)}
