@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ECHO
+
+**ECHO** is a personal cashflow and expense tracking web app built to help users monitor their allowance, expenses, debts, and spending habits in a simple and visual way.
+
+The project is designed for students or individuals who want a clearer view of where their money goes. Instead of only logging transactions, ECHO gives users quick insights such as budget usage, remaining balance, spending distribution, debt status, and a predicted “broke date” based on recent spending behavior.
+
+## Features
+
+* User authentication with Supabase
+* Allowance and budget cycle setup
+* Expense, allowance, shortage, and debt tracking
+* Debt status management
+* Receipt scanning using OCR
+* Financial analytics dashboard
+* Spending category breakdown
+* Predicted broke date based on recent expenses
+* Coach/Roast tone mode for personalized feedback
+* Light and dark mode
+* Responsive, mobile-friendly interface
+
+## Tech Stack
+
+* **Next.js**
+* **React**
+* **TypeScript**
+* **Tailwind CSS**
+* **Supabase**
+* **Framer Motion**
+* **Recharts**
+* **Tesseract.js**
+* **Vercel**
 
 ## Getting Started
 
-First, run the development server:
+Clone the repository:
+
+```bash
+git clone https://github.com/amseph/echo.git
+cd echo
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env.local` file and add your Supabase credentials:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the app in your browser:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Live Demo
 
-## Learn More
+ECHO is already deployed and hosted on **Vercel**.
 
-To learn more about Next.js, take a look at the following resources:
+Live Site: `https://echo-omega-seven.vercel.app`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Purpose
 
-## Deploy on Vercel
+ECHO was built as a personal project to explore how finance tracking can feel more familiar, visual, and engaging for everyday users. The goal is to make budgeting less intimidating by combining clean UI, useful analytics, and personality-driven feedback into one simple dashboard.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Developer
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Developed by **Ivan Joseph Jaurigue**.
