@@ -77,4 +77,5 @@ ECHO was built as a personal project to explore how finance tracking can feel mo
 
 ## Developer
 
-Developed by **Ivan Joseph Jaurigue**.
+Developed by **Ivan Jaurigue**.
+

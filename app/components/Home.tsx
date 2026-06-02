@@ -121,27 +121,27 @@ export default function Home({
 
       {/* METRIC CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-4">
+        <motion.div className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-4">
           <p className="text-[10px] font-bold text-gray-400 dark:text-neutral-400 uppercase tracking-wider">Allowance</p>
           <p className="text-xl font-bold text-[#1d2d2a] mt-1">₱{totalAllowance.toFixed(2)}</p>
           <p className="text-[10px] text-green-500 dark:text-emerald-400 mt-1 font-medium">● Inflow this cycle</p>
         </motion.div>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-4">
+        <motion.div className="bg-white dark:bg-neutral-800 rounded-2xl border border-gray-100 dark:border-neutral-700 shadow-sm p-4">
           <p className="text-[10px] font-bold text-gray-400 dark:text-neutral-400 uppercase tracking-wider">Expenses</p>
           <p className="text-xl font-bold text-[#1d1d1f] dark:text-neutral-100 mt-1">₱{totalExpenses.toFixed(2)}</p>
           <p className="text-[10px] text-gray-400 dark:text-neutral-400 mt-1 font-medium">{homeBurnPct}% of budget</p>
         </motion.div>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${totalDebt > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700'}`}>
+        <motion.div className={`rounded-2xl border shadow-sm p-4 ${totalDebt > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700'}`}>
           <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Debt</p>
           <p className="text-xl font-bold text-amber-700 mt-1">₱{totalDebt.toFixed(2)}</p>
           <p className="text-[10px] text-amber-500 mt-1 font-medium">{totalDebt > 0 ? '⚠ Outstanding' : '● Clear'}</p>
         </motion.div>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700'}`}>
+        <motion.div className={`rounded-2xl border shadow-sm p-4 ${netBalance <= 0 ? 'bg-red-50 border-red-200' : 'bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700'}`}>
           <p className="text-[10px] font-bold text-gray-400 dark:text-neutral-400 uppercase tracking-wider">Net Balance</p>
           <p className={`text-xl font-bold mt-1 ${netBalance <= 0 ? 'text-red-600' : 'text-blue-600 dark:text-blue-400'}`}>₱{netBalance.toFixed(2)}</p>
           <p className={`text-[10px] mt-1 font-medium ${netBalance <= 0 ? 'text-red-400' : 'text-blue-400'}`}>{netBalance <= 0 ? '● Deficit' : '● Available'}</p>
         </motion.div>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className={`rounded-2xl border shadow-sm p-4 ${daysRemaining !== null && daysRemaining <= 3 ? 'bg-red-50 border-red-200' : 'bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700'}`}>
+        <motion.div className={`rounded-2xl border shadow-sm p-4 ${daysRemaining !== null && daysRemaining <= 3 ? 'bg-red-50 border-red-200' : 'bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700'}`}>
           <p className="text-[10px] font-bold text-gray-400 dark:text-neutral-400 uppercase tracking-wider">Runway</p>
           <p className={`text-xl font-bold mt-1 ${daysRemaining === null || netBalance <= 0 ? 'text-gray-300 dark:text-neutral-500' : daysRemaining <= 3 ? 'text-red-500' : 'text-[#1d1d1f] dark:text-neutral-100'}`}>
             {daysRemaining === null || netBalance <= 0 ? '—' : `${daysRemaining}d`}
