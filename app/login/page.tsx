@@ -125,7 +125,7 @@ export default function AuthPage() {
                 <img
                     src="/icon-512.png"
                     className="w-20 h-20 mx-auto mb-3 object-contain drop-shadow-lg"
-                    alt="ECHO Logo"
+                    alt="Ares Logo"
                 />
 
                 {/* Dynamic heading */}
@@ -160,7 +160,7 @@ export default function AuthPage() {
 
                         <h2 className="text-xl font-bold text-neutral-900 mb-2">Verify your email</h2>
                         <p className="mt-1 text-sm text-neutral-500 leading-relaxed max-w-[280px]">
-                            We sent a verification link to your email address. Please check your inbox and spam folder to activate your ECHO account.
+                            We sent a verification link to your email address. Please check your inbox and spam folder to activate your Ares account.
                         </p>
 
                         <button

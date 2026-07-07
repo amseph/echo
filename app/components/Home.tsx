@@ -98,7 +98,7 @@ export default function Home({
         className="bg-gradient-to-br from-[#1d2d2a] to-[#2a453e] rounded-3xl px-6 py-5 flex items-center justify-between"
       >
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#b7e887]/70 mb-0.5">ECHO Dashboard</p>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#b7e887]/70 mb-0.5">Ares Dashboard</p>
           <h1 className="text-2xl font-bold text-white tracking-tight">Hello, {userEmail ? userEmail.split('@')[0] : 'User'} </h1>
           <p className="text-xs text-[#b7e887]/60 mt-0.5">Expense &amp; Cashflow Habit Observer</p>
         </div>

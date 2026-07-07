@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ECHO",
+  title: "Ares",
   description: "Expense & Cashflow Habit Observer",
   manifest: "/manifest.json",
 };

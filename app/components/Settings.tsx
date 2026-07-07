@@ -148,7 +148,7 @@ export default function Settings({
 
       {/* FAQ Accordion Section */}
       <div className="pt-2">
-        <h3 className="text-[13px] font-semibold text-[#86868b] dark:text-neutral-400 uppercase tracking-wider mb-3 px-1">The Essential ECHO FAQs</h3>
+        <h3 className="text-[13px] font-semibold text-[#86868b] dark:text-neutral-400 uppercase tracking-wider mb-3 px-1">The Essential Ares FAQs</h3>
         <div className="bg-white dark:bg-neutral-800 rounded-2xl border border-[#e8e8ed] dark:border-neutral-700 shadow-sm overflow-hidden divide-y divide-[#f5f5f7] dark:divide-neutral-700">
           {ECHO_FAQS.map((faq, idx) => (
             <div key={idx} className="flex flex-col">
