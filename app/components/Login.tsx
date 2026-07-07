@@ -98,9 +98,9 @@ export default function Login({
       <div className="relative z-10 -mt-6 flex-1 rounded-t-[2.5rem] bg-white px-6 pt-10 pb-10 shadow-2xl overflow-y-auto">
         <div className="mx-auto w-full max-w-[440px] text-center">
           
-          <img src="/icon-512.png" className="w-16 h-16 mx-auto mb-2" alt="Ares Logo" />
+          <img src="/icon-512.png" className="w-16 h-16 mx-auto mb-2" alt="ECHO Logo" />
           
-          <h2 className="text-2xl font-extrabold tracking-tight text-neutral-900">Welcome to Ares</h2>
+          <h2 className="text-2xl font-extrabold tracking-tight text-neutral-900">Welcome to ECHO</h2>
           <p className="mt-2 mb-8 text-sm leading-relaxed text-neutral-500">
             Let’s initialize your tracking cycle. Enter your current starting allowance or pocket money to unlock your dashboard.
           </p>

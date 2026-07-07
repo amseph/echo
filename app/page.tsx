@@ -445,10 +445,10 @@ export default function Home() {
 
     const fireNotification = () => {
       if (Notification.permission === 'granted') {
-        new Notification(`Ares Vibe Check: ${vibeNotifTitle}`, {
+        new Notification(`ECHO Vibe Check: ${vibeNotifTitle}`, {
           body: vibeNotifDesc,
           icon: '/favicon.ico',
-          tag: 'ares-vibe-check',
+          tag: 'echo-vibe-check',
         });
       }
     };

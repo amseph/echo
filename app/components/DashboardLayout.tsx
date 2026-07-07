@@ -56,13 +56,13 @@ export default function DashboardLayout({
       >
         <div className="flex items-center justify-between p-5 border-b border-neutral-800/50">
           <div className="flex items-center gap-3 overflow-hidden">
-            <img src="/icon-512.png" className="w-9 h-9 object-contain flex-shrink-0" alt="Ares" />
+            <img src="/icon-512.png" className="w-9 h-9 object-contain flex-shrink-0" alt="ECHO" />
             <span
               className={`font-bold text-white text-lg tracking-tight whitespace-nowrap transition-opacity duration-300 ${
                 isSidebarExpanded ? 'opacity-100' : 'opacity-0 hidden'
               }`}
             >
-              Ares
+              ECHO
             </span>
           </div>
           <button
